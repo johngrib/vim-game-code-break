@@ -14,7 +14,9 @@ let s:ship = {
             \'left' : { 'x': 0, 'y': 0 },
             \'right' : { 'x': 0, 'y': 0 },
             \'body' : '<12345654321>',
+            \'direction' : 'left'
             \}
+let s:ball = {}
 
 function! s:main()
 
@@ -24,6 +26,45 @@ function! s:main()
 
     call s:init()
 
+    execute "normal! G"
+
+    let l:loop = 1
+    while l:loop == 1
+        let l:input = nr2char(getchar(0))
+        call s:updateDirection(l:input)
+        call s:updateItems()
+        sleep 30ms
+        redraw
+    endwhile
+
+endfunction
+
+function! s:updateDirection(input)
+    if a:input == 'h'
+        let s:ship['direction'] = 'left'
+    elseif a:input == 'l'
+        let s:ship['direction'] = 'right'
+    endif
+endfunction
+
+function! s:updateItems()
+    if (s:ship['direction'] == 'left') && (s:getCharValue(0, line('$')) != '<')
+        call s:moveShipLeft()
+    elseif (s:ship['direction'] == 'right') && (s:getCharValue(s:config['width'], line('$')) != '>')
+        call s:moveShipRight()
+    endif
+endfunction
+
+function! s:getCharValue(x, y)
+    return getline(a:y)[a:x]
+endfunction
+
+function! s:moveShipLeft()
+    execute "normal! G0x"
+endfunction
+
+function! s:moveShipRight()
+    execute "normal! G0i "
 endfunction
 
 " game initialize
@@ -56,6 +97,7 @@ function! s:setLocalSetting()
     setlocal nonumber
     setlocal noswapfile
     setlocal nowrap
+    setlocal nohlsearch
     " setlocal nonumber
     setlocal norelativenumber
     setlocal listchars=
@@ -63,11 +105,12 @@ endfunction
 
 "
 function! s:setColor()
-    syntax match gameship '\v\<12345654321\>'
-    highlight gameship ctermfg=blue ctermbg=blue guifg=blue guibg=blue
+    syntax region gameship start="\v\<12" end="\v21\>"
+    highlight gameship ctermfg=yellow ctermbg=yellow guifg=yellow guibg=yellow
 endfunction
 
 function! s:drawScreen()
+    execute "normal! Go"
     let l:width = s:config['width']
     let l:last_line = line('$')
 
@@ -83,16 +126,18 @@ function! s:drawScreen()
 endfunction
 
 function! s:removeEmptyLines()
-    0,$-12g/^\s*$/d
+    silent! 0,$-12g/^\s*$/d
 endfunction
 
 function! s:appendChars()
     let l:chars = s:config['empty_line']
-    %s/$/\=l:chars/
+    silent! %s/$/\=l:chars/
 endfunction
 
 function! s:drawShip()
-    execute "normal! Go" . s:ship['body']
+    execute "normal! Go"
+    execute "normal! Go"
+    execute "normal! I" . s:ship['body']
 endfunction
 
 function! s:setConfig()
@@ -107,3 +152,4 @@ function! s:setConfig()
 
     let s:config['empty_line'] = l:chars
 endfunction
+
