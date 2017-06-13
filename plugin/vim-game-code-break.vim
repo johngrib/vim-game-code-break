@@ -4,6 +4,7 @@ command! VimGameCodeBreak :call s:main()
 
 let s:config = {
             \ 'width': 0,
+            \ 'height': 0,
             \ 'empty_line': '',
             \}
 let s:data = {
@@ -11,12 +12,23 @@ let s:data = {
             \ 'temp': '',
             \}
 let s:ship = {
-            \'left' : { 'x': 0, 'y': 0 },
-            \'right' : { 'x': 0, 'y': 0 },
+            \'center' : { 'x': 0, 'y': 0 },
             \'body' : '<12345654321>',
-            \'direction' : 'left'
+            \'direction' : 'left',
+            \'location': 0,
             \}
-let s:ball = {}
+let s:ball_proto = { 'x': 0, 'y': 0, 'active': 0 }
+
+let s:move = {
+            \ 'left-up'    : { 'x' : -1, 'y' : -1 },
+            \ 'left-down'  : { 'x' : -1, 'y' :  1 },
+            \ 'right-up'   : { 'x' : 1 , 'y' : -1 },
+            \ 'right-down' : { 'x' : 1 , 'y' :  1 },
+            \ 'up'         : { 'x' : 0 , 'y' : -1 },
+            \ 'down'       : { 'x' : 0 , 'y' :  1 },
+            \ }
+
+let s:ball = {'x': -1, 'y':-1, 'direction': s:move['left-up']}
 
 function! s:main()
 
@@ -26,12 +38,12 @@ function! s:main()
 
     call s:init()
 
-    execute "normal! G"
+    execute "normal! Gzb"
 
     let l:loop = 1
     while l:loop == 1
         let l:input = nr2char(getchar(0))
-        call s:updateDirection(l:input)
+        call s:userInputProc(l:input)
         call s:updateItems()
         sleep 30ms
         redraw
@@ -39,12 +51,21 @@ function! s:main()
 
 endfunction
 
-function! s:updateDirection(input)
+function! s:userInputProc(input)
     if a:input == 'h'
         let s:ship['direction'] = 'left'
     elseif a:input == 'l'
         let s:ship['direction'] = 'right'
+    elseif a:input == ' '
+        call s:createNewBall()
     endif
+endfunction
+
+function! s:createNewBall()
+    let l:y = line('$') - 1
+    let l:x = s:ship['center']['x']
+    let s:ball['x'] = l:x
+    let s:ball['y'] = l:y
 endfunction
 
 function! s:updateItems()
@@ -53,6 +74,82 @@ function! s:updateItems()
     elseif (s:ship['direction'] == 'right') && (s:getCharValue(s:config['width'], line('$')) != '>')
         call s:moveShipRight()
     endif
+    call s:moveBall()
+endfunction
+
+function! s:moveBall()
+
+    if s:ball['x'] == -1 || s:ball['y'] == -1
+        return
+    endif
+
+
+    let l:x = s:ball['x']
+    let l:y = s:ball['y']
+
+    if s:pongX(l:x, l:y)
+        let s:ball['direction']['y'] = -1 * (s:ball['direction']['y'])
+    endif
+
+    if s:pongY(l:x, l:y)
+        let s:ball['direction']['x'] = -1 * (s:ball['direction']['x'])
+    endif
+
+    let l:nextX = s:ball['x'] + s:ball['direction']['x']
+    let l:nextY = s:ball['y'] + s:ball['direction']['y']
+
+    let s:ball['x'] = l:nextX
+    let s:ball['y'] = l:nextY
+
+    call s:drawChar(l:x, l:y, ' ')
+    call s:drawChar(s:ball['x'], s:ball['y'], 'O')
+
+endfunction
+
+function! s:pongX(x, y)
+
+    let l:last = line('$')
+    let l:yy = a:y + s:ball['direction']['y']
+
+    if l:yy >= l:last
+        call s:removeEmptyLines()
+        return 1
+    endif
+
+    if a:y <= (l:last - s:config['height'])
+        return 1
+    endif
+
+
+    if s:getCharValue(a:x, l:yy) != ' '
+        if l:yy < line('$')
+            execute "normal! " . l:yy . "gg0" . a:x . "lviWr G0"
+        endif
+        return 1
+    endif
+
+    return 0
+endfunction
+
+function! s:pongY(x, y)
+
+    let l:xx = a:x + s:ball['direction']['x']
+    let l:last = s:config['width']
+
+    if ((l:xx <= 1) || a:x >= l:last) && (a:y - 1 >= 1)
+        execute "normal! " . (a:y - 1) . "gg0JG0"
+        return 1
+    endif
+
+    if s:getCharValue(l:xx, a:y) != ' '
+        execute "normal! " . a:y . "gg0" . l:xx . "lviWr G0"
+        return 1
+    endif
+
+    if a:x >= l:last
+        return 1
+    endif
+    return 0
 endfunction
 
 function! s:getCharValue(x, y)
@@ -60,10 +157,12 @@ function! s:getCharValue(x, y)
 endfunction
 
 function! s:moveShipLeft()
+    let s:ship['center']['x'] = s:ship['center']['x'] - 1
     execute "normal! G0x"
 endfunction
 
 function! s:moveShipRight()
+    let s:ship['center']['x'] = s:ship['center']['x'] + 1
     execute "normal! G0i "
 endfunction
 
@@ -114,9 +213,6 @@ function! s:drawScreen()
     let l:width = s:config['width']
     let l:last_line = line('$')
 
-    let s:ship['left']['y'] = l:last_line
-    let s:ship['right']['y'] = l:last_line
-
     let l:lines = repeat([repeat(' ', l:width)], 5)
 
     call setline(l:last_line, l:lines)
@@ -126,7 +222,7 @@ function! s:drawScreen()
 endfunction
 
 function! s:removeEmptyLines()
-    silent! 0,$-12g/^\s*$/d
+    silent! 0,$-10g/^\s*$/d
 endfunction
 
 function! s:appendChars()
@@ -136,12 +232,16 @@ endfunction
 
 function! s:drawShip()
     execute "normal! Go"
-    execute "normal! Go"
     execute "normal! I" . s:ship['body']
+    execute "normal! 0f6"
+
+    let s:ship['center']['y'] = line('$')
+    let s:ship['center']['x'] = getcurpos()[2]
 endfunction
 
 function! s:setConfig()
     let s:config['width'] = winwidth(0)
+    let s:config['height'] = winheight(0)
 
     let l:width = s:config['width']
     let l:chars = ''
@@ -153,3 +253,6 @@ function! s:setConfig()
     let s:config['empty_line'] = l:chars
 endfunction
 
+function! s:drawChar(x, y, char)
+    execute "normal! " . a:y . 'gg0' . a:x . 'lr' . a:char . 'Gzb'
+endfunction
