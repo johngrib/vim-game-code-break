@@ -106,22 +106,26 @@ function! s:moveBall()
 
 endfunction
 
+" ball 의 X axis 충돌 처리를 한다
 function! s:pongX(x, y)
 
     let l:last = line('$')
     let l:yy = a:y + s:ball['direction']['y']
 
     if l:yy >= l:last
-        call s:removeEmptyLines()
+        " 바닥에 닿은 경우
+        " call s:removeEmptyLines()
         return 1
     endif
 
     if a:y <= (l:last - s:config['height'])
+        " 천장에 닿은 경우
+        " TODO 게임 오버 되도록 작업할 것
         return 1
     endif
 
-
     if s:getCharValue(a:x, l:yy) != ' '
+        " 글자에 닿은 경우
         if l:yy < line('$')
             execute "normal! " . l:yy . "gg0" . a:x . "lviWr G0"
         endif
@@ -131,17 +135,27 @@ function! s:pongX(x, y)
     return 0
 endfunction
 
+" ball 의 Y axis 충돌 처리를 한다
 function! s:pongY(x, y)
 
     let l:xx = a:x + s:ball['direction']['x']
     let l:last = s:config['width']
 
-    if ((l:xx <= 1) || a:x >= l:last) && (a:y - 1 >= 1)
-        execute "normal! " . (a:y - 1) . "gg0JG0"
+    if ((l:xx <= 1)) && (a:y - 1 >= 1)
+        " 왼쪽 벽에 닿은 경우: line join
+        execute "normal! " . (a:y - 1) . "gg0"
+        .s/\s*$/ /
+        execute "normal! JG0"
+        return 1
+    endif
+
+    if (a:x >= l:last) && (a:y - 1 >= 1)
+        " 오른쪽 벽에 닿은 경우
         return 1
     endif
 
     if s:getCharValue(l:xx, a:y) != ' '
+        " 글자에 닿은 경우
         execute "normal! " . a:y . "gg0" . l:xx . "lviWr G0"
         return 1
     endif
