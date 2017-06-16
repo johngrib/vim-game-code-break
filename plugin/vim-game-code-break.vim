@@ -83,23 +83,19 @@ function! s:moveBall()
         return
     endif
 
-
     let l:x = s:ball['x']
     let l:y = s:ball['y']
 
-    if s:pongX(l:x, l:y)
+    if s:pongX(l:x, l:y) == 1
         let s:ball['direction']['y'] = -1 * (s:ball['direction']['y'])
     endif
 
-    if s:pongY(l:x, l:y)
+    if s:pongY(l:x, l:y) == 1
         let s:ball['direction']['x'] = -1 * (s:ball['direction']['x'])
     endif
 
-    let l:nextX = s:ball['x'] + s:ball['direction']['x']
-    let l:nextY = s:ball['y'] + s:ball['direction']['y']
-
-    let s:ball['x'] = l:nextX
-    let s:ball['y'] = l:nextY
+    let s:ball['x'] = l:x + s:ball['direction']['x']
+    let s:ball['y'] = l:y + s:ball['direction']['y']
 
     call s:drawChar(l:x, l:y, ' ')
     call s:drawChar(s:ball['x'], s:ball['y'], 'O')
@@ -120,7 +116,6 @@ function! s:pongX(x, y)
 
     if a:y <= (l:last - s:config['height'])
         " 천장에 닿은 경우
-        " TODO 게임 오버 되도록 작업할 것
         return 1
     endif
 
@@ -141,22 +136,25 @@ function! s:pongY(x, y)
     let l:xx = a:x + s:ball['direction']['x']
     let l:last = s:config['width']
 
-    if ((l:xx <= 1)) && (a:y - 1 >= 1)
-        " 왼쪽 벽에 닿은 경우: line join
+    if ((l:xx <= 1) || (a:x >= l:last)) && (a:y - 1 >= 1)
+        " 좌우 벽에 닿은 경우: line join
         execute "normal! " . (a:y - 1) . "gg0"
         .s/\s*$/ /
-        execute "normal! JG0"
+        " execute "normal! JG0zb"
+        execute "normal! J"
+        .s/$/\=s:config['empty_line']/
+        execute "normal! G0zb"
         return 1
     endif
 
-    if (a:x >= l:last) && (a:y - 1 >= 1)
-        " 오른쪽 벽에 닿은 경우
-        return 1
-    endif
+    " if (a:x >= l:last) && (a:y - 1 >= 1)
+    "     " 오른쪽 벽에 닿은 경우
+    "     return 1
+    " endif
 
     if s:getCharValue(l:xx, a:y) != ' '
         " 글자에 닿은 경우
-        execute "normal! " . a:y . "gg0" . l:xx . "lviWr G0"
+        execute "normal! " . a:y . "gg0" . l:xx . "lviWr G0zb"
         return 1
     endif
 
@@ -214,6 +212,7 @@ function! s:setLocalSetting()
     " setlocal nonumber
     setlocal norelativenumber
     setlocal listchars=
+    retab
 endfunction
 
 "
