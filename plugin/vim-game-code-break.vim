@@ -85,6 +85,7 @@ function! s:moveBall()
 
     let l:x = s:ball['x']
     let l:y = s:ball['y']
+    call s:drawChar(l:x, l:y, ' ')
 
     if s:pongX(l:x, l:y) == 1
         let s:ball['direction']['y'] = -1 * (s:ball['direction']['y'])
@@ -97,7 +98,6 @@ function! s:moveBall()
     let s:ball['x'] = l:x + s:ball['direction']['x']
     let s:ball['y'] = l:y + s:ball['direction']['y']
 
-    call s:drawChar(l:x, l:y, ' ')
     call s:drawChar(s:ball['x'], s:ball['y'], 'O')
 
 endfunction
@@ -140,7 +140,6 @@ function! s:pongY(x, y)
         " 좌우 벽에 닿은 경우: line join
         execute "normal! " . (a:y - 1) . "gg0"
         .s/\s*$/ /
-        " execute "normal! JG0zb"
         execute "normal! J"
         .s/$/\=s:config['empty_line']/
         execute "normal! G0zb"
