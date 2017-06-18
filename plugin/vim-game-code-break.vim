@@ -13,7 +13,7 @@ let s:data = {
             \}
 let s:ship = {
             \'center' : { 'x': 0, 'y': 0 },
-            \'body' : '<12345654321>',
+            \'body' : '<===============>',
             \'direction' : 'left',
             \'location': 0,
             \}
@@ -216,8 +216,8 @@ endfunction
 
 "
 function! s:setColor()
-    syntax region gameship start="\v\<12" end="\v21\>"
-    highlight gameship ctermfg=yellow ctermbg=yellow guifg=yellow guibg=yellow
+    " syntax region gameship start="\v\<12" end="\v21\>"
+    " highlight gameship ctermfg=yellow ctermbg=yellow guifg=yellow guibg=yellow
 endfunction
 
 function! s:drawScreen()
@@ -225,12 +225,15 @@ function! s:drawScreen()
     let l:width = s:config['width']
     let l:last_line = line('$')
 
-    let l:lines = repeat([repeat(' ', l:width)], 5)
-
-    call setline(l:last_line, l:lines)
+    let l:bottom_lines = repeat([repeat(' ', l:width)], 5)
+    call setline(l:last_line, l:bottom_lines)
 
     call s:appendChars()
     call s:removeEmptyLines()
+
+    execute "normal! ggO"
+    execute "normal! S"
+    execute "normal! yy" . s:config['height'] . "pGzb"
 endfunction
 
 function! s:removeEmptyLines()
