@@ -134,18 +134,14 @@ function! s:pongY(x, y)
 
     if ((l:xx <= 0) || (a:x >= l:last)) && (a:y - 1 >= 1)
         " 좌우 벽에 닿은 경우: line join
-        execute "normal! " . (a:y - 1) . "gg0"
-        .s/\s*$/ /
-        execute "normal! J"
-        .s/$/\=s:config['empty_line']/
+        let l:row = substitute(getline(a:y - 1), '\s*$', ' ', '')
+        call setline(a:y - 1, l:row)
+        execute "" . (a:y - 1) . "j"
+        let l:botrow = substitute(getline(a:y - 1), '$', s:config['empty_line'], '')
+        call setline(a:y - 1, l:botrow)
         execute "normal! G0zb"
         return 1
     endif
-
-    " if (a:x >= l:last) && (a:y - 1 >= 1)
-    "     " 오른쪽 벽에 닿은 경우
-    "     return 1
-    " endif
 
     if s:getCharValue(l:xx, a:y) != ' '
         " 글자에 닿은 경우
