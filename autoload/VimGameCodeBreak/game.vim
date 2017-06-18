@@ -132,7 +132,7 @@ function! s:pongY(x, y)
     let l:xx = a:x + s:ball['direction']['x']
     let l:last = s:config['width']
 
-    if ((l:xx <= 1) || (a:x >= l:last)) && (a:y - 1 >= 1)
+    if ((l:xx <= 0) || (a:x >= l:last)) && (a:y - 1 >= 1)
         " 좌우 벽에 닿은 경우: line join
         execute "normal! " . (a:y - 1) . "gg0"
         .s/\s*$/ /
@@ -265,5 +265,7 @@ function! s:setConfig()
 endfunction
 
 function! s:drawChar(x, y, char)
-    execute "normal! " . a:y . 'gg0' . a:x . 'lr' . a:char . 'Gzb'
+    let l:row = getline(a:y)
+    let l:newRow = l:row[0:(a:x - 1)] . a:char . l:row[(a:x + 1):]
+    call setline(a:y, l:newRow)
 endfunction
