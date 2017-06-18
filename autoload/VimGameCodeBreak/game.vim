@@ -9,7 +9,8 @@ let s:data = {
             \}
 let s:ship = {
             \'center' : { 'x': 0, 'y': 0 },
-            \'body' : '<===============>',
+            \'left' : '',
+            \'body' : 'XXXXXXXXXXXXXXXXX',
             \'direction' : 'left',
             \'location': 0,
             \}
@@ -65,9 +66,9 @@ function! s:createNewBall()
 endfunction
 
 function! s:updateItems()
-    if (s:ship['direction'] == 'left') && (s:getCharValue(0, line('$')) != '<')
+    if (s:ship['direction'] == 'left')
         call s:moveShipLeft()
-    elseif (s:ship['direction'] == 'right') && (s:getCharValue(s:config['width'], line('$')) != '>')
+    elseif (s:ship['direction'] == 'right')
         call s:moveShipRight()
     endif
     call s:moveBall()
@@ -160,27 +161,23 @@ function! s:getCharValue(x, y)
 endfunction
 
 function! s:moveShipLeft()
-    let s:ship['center']['x'] = s:ship['center']['x'] - 1
-    execute "normal! G0x"
+    setlocal statusline=%!VimGameCodeBreak#game#showShip(-1)
 endfunction
 
 function! s:moveShipRight()
-    let s:ship['center']['x'] = s:ship['center']['x'] + 1
-    execute "normal! G0i "
+    setlocal statusline=%!VimGameCodeBreak#game#showShip(1)
 endfunction
 
 " game initialize
 function! s:init()
-
     let l:file_name = expand('%:t')
-
     call s:createBuffer(l:file_name)
     call s:setLocalSetting()
     call s:setConfig()
     call s:setColor()
     call s:drawScreen()
     call s:drawShip()
-
+    execute "normal! Gzb"
 endfunction
 
 function! s:createBuffer(filename)
@@ -203,7 +200,20 @@ function! s:setLocalSetting()
     " setlocal nonumber
     setlocal norelativenumber
     setlocal listchars=
+    setlocal laststatus=2
+    setlocal statusline=%!VimGameCodeBreak#game#showShip()
+    hi statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
     retab
+endfunction
+
+function! VimGameCodeBreak#game#showShip(move)
+    if a:move > 0 && (strlen(s:ship['body']) + strlen(s:ship['left'])) < s:config['width']
+        " let s:sleft = " " . s:sleft
+        let s:ship['left'] = " " . s:ship['left']
+    elseif a:move < 0 && s:ship['left'][0] == " "
+        let s:ship['left'] = s:ship['left'][1:]
+    endif
+    return s:ship['left'] . s:ship['body']
 endfunction
 
 "
@@ -239,11 +249,6 @@ endfunction
 
 function! s:drawShip()
     execute "normal! Go"
-    execute "normal! I" . s:ship['body']
-    execute "normal! 0f6"
-
-    let s:ship['center']['y'] = line('$')
-    let s:ship['center']['x'] = getcurpos()[2]
 endfunction
 
 function! s:setConfig()
