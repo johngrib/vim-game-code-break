@@ -37,8 +37,8 @@ function! VimGameCodeBreak#game#main()
 
     execute "normal! G0zb"
 
-    let l:loop = 1
-    while l:loop == 1
+    let s:loop = 1
+    while s:loop == 1
         let l:input = nr2char(getchar(0))
         call s:userInputProc(l:input)
         call s:updateItems()
@@ -106,9 +106,12 @@ function! s:pongX(x, y)
     let l:yy = a:y + s:ball['direction']['y']
 
     if l:yy >= l:last + 1
-        " 바닥에 닿은 경우
-        " TODO gameover 처리
-        " call s:removeEmptyLines()
+        let l:left_size = strlen(s:ship['left'])
+        if a:x < l:left_size || a:x > (l:left_size + strlen(s:ship['body']))
+            " 바닥에 닿은 경우
+            echo 'gameover'
+            let s:loop = -1
+        endif
         return 1
     endif
 
