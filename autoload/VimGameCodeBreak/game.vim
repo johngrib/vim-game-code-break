@@ -25,9 +25,6 @@ let s:ball = {'x': -1, 'y':-1, 'direction': s:move['left-up']}
 
 function! VimGameCodeBreak#game#main()
 
-    let s:data['temp'] = getreg('z')
-    execute "normal! ggVG\"zy"
-    let s:data['text'] = getreg('z')
 
     call s:init()
 
@@ -184,46 +181,16 @@ endfunction
 " game initialize
 function! s:init()
 
-    let l:file_name = expand('%:t')
-    let s:colors_name = g:colors_name
+    call VimGameCodeBreak#init#createBuffer()
 
-    call s:createBuffer(l:file_name)
-    call s:setLocalSetting()
     let s:config = VimGameCodeBreak#init#getInitConfig()
     call s:drawScreen()
 
     call VimGameCodeBreak#life#set(5)
-endfunction
-
-function! s:createBuffer(filename)
-    silent edit `='VIM-GAME-CODE-BREAK-' . a:filename`
-    execute "normal! \"zp"
-    call setreg('z', s:data['temp'])
-endfunction
-
-function! s:setLocalSetting()
-
-    execute "colorscheme " . s:colors_name
-    " echo synIDattr(synIDtrans(hlID('StatusLine')), 'fg')
-    setlocal bufhidden=wipe
-    setlocal buftype=nofile
-    setlocal buftype=nowrite
-    setlocal nocursorcolumn
-    setlocal nocursorline
-    setlocal nolist
-    setlocal nonumber
-    setlocal noswapfile
-    setlocal nowrap
-    setlocal nohlsearch
-    " setlocal nonumber
-    setlocal norelativenumber
-    setlocal listchars=
-    setlocal laststatus=2
-    highlight statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
     setlocal statusline=%!VimGameCodeBreak#game#showShip()
 
-    retab
 endfunction
+
 
 function! VimGameCodeBreak#game#showShip()
     return s:ship['left'] . s:ship['body']
