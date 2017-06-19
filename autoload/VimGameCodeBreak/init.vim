@@ -44,3 +44,22 @@ function! s:setLocalSetting()
     highlight statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
     retab
 endfunction
+
+function! VimGameCodeBreak#init#drawScreen(config)
+    execute "normal! Go"
+    let l:width = a:config['width']
+    let l:last_line = line('$')
+
+    let l:bottom_lines = repeat([repeat(' ', l:width)], 5)
+    call setline(l:last_line, l:bottom_lines)
+
+    call s:appendChars(a:config['empty_line'])
+
+    execute "normal! ggO"
+    execute "normal! S"
+    execute "normal! yy" . a:config['height'] . "pGzb"
+endfunction
+
+function! s:appendChars(chars)
+    silent! %s/$/\=a:chars/
+endfunction

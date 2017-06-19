@@ -1,8 +1,4 @@
 let s:config = {}
-let s:data = {
-            \ 'text': '',
-            \ 'temp': '',
-            \}
 let s:ship = {
             \'center' : { 'x': 0, 'y': 0 },
             \'left' : '',
@@ -184,9 +180,11 @@ function! s:init()
     call VimGameCodeBreak#init#createBuffer()
 
     let s:config = VimGameCodeBreak#init#getInitConfig()
-    call s:drawScreen()
+
+    call VimGameCodeBreak#init#drawScreen(s:config)
 
     call VimGameCodeBreak#life#set(5)
+
     setlocal statusline=%!VimGameCodeBreak#game#showShip()
 
 endfunction
@@ -196,30 +194,10 @@ function! VimGameCodeBreak#game#showShip()
     return s:ship['left'] . s:ship['body']
 endfunction
 
-function! s:drawScreen()
-    execute "normal! Go"
-    let l:width = s:config['width']
-    let l:last_line = line('$')
-
-    let l:bottom_lines = repeat([repeat(' ', l:width)], 5)
-    call setline(l:last_line, l:bottom_lines)
-
-    call s:appendChars()
-    call s:removeEmptyLines()
-
-    execute "normal! ggO"
-    execute "normal! S"
-    execute "normal! yy" . s:config['height'] . "pGzb"
-endfunction
-
 function! s:removeEmptyLines()
     silent! 0,$-10g/^\s*$/d
 endfunction
 
-function! s:appendChars()
-    let l:chars = s:config['empty_line']
-    silent! %s/$/\=l:chars/
-endfunction
 
 function! s:drawChar(x, y, char)
     let l:row = getline(a:y)
