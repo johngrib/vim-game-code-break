@@ -1,8 +1,4 @@
-let s:config = {
-            \ 'width': 0,
-            \ 'height': 0,
-            \ 'empty_line': '',
-            \}
+let s:config = {}
 let s:data = {
             \ 'text': '',
             \ 'temp': '',
@@ -187,11 +183,13 @@ endfunction
 
 " game initialize
 function! s:init()
+
     let l:file_name = expand('%:t')
     let s:colors_name = g:colors_name
+
     call s:createBuffer(l:file_name)
     call s:setLocalSetting()
-    call s:setConfig()
+    let s:config = VimGameCodeBreak#init#getInitConfig()
     call s:drawScreen()
 
     call VimGameCodeBreak#life#set(5)
@@ -254,20 +252,6 @@ endfunction
 function! s:appendChars()
     let l:chars = s:config['empty_line']
     silent! %s/$/\=l:chars/
-endfunction
-
-function! s:setConfig()
-    let s:config['width'] = winwidth(0)
-    let s:config['height'] = winheight(0)
-
-    let l:width = s:config['width']
-    let l:chars = ''
-
-    for cnt in range(1, l:width)
-        let l:chars = l:chars . ' '
-    endfor
-
-    let s:config['empty_line'] = l:chars
 endfunction
 
 function! s:drawChar(x, y, char)
