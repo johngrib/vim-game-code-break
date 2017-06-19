@@ -42,6 +42,14 @@ function! VimGameCodeBreak#game#main()
         let l:input = nr2char(getchar(0))
         call s:userInputProc(l:input)
         call s:updateItems()
+
+        if VimGameCodeBreak#life#isGameOver()
+            echo 'GAME OVER'
+            let s:loop = -1
+        endif
+
+        echo "LIFE : " . VimGameCodeBreak#life#get()
+
         sleep 30ms
         redraw
     endwhile
@@ -109,8 +117,7 @@ function! s:pongX(x, y)
         let l:left_size = strlen(s:ship['left'])
         if a:x < l:left_size || a:x > (l:left_size + strlen(s:ship['body']))
             " 바닥에 닿은 경우
-            echo 'gameover'
-            let s:loop = -1
+            call VimGameCodeBreak#life#decrease()
         endif
         return 1
     endif
@@ -186,6 +193,8 @@ function! s:init()
     call s:setLocalSetting()
     call s:setConfig()
     call s:drawScreen()
+
+    call VimGameCodeBreak#life#set(5)
 endfunction
 
 function! s:createBuffer(filename)
