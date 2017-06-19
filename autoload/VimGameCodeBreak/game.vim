@@ -35,7 +35,7 @@ function! VimGameCodeBreak#game#main()
 
     call s:init()
 
-    execute "normal! Gzb"
+    execute "normal! G0zb"
 
     let l:loop = 1
     while l:loop == 1
@@ -105,8 +105,9 @@ function! s:pongX(x, y)
     let l:last = line('$')
     let l:yy = a:y + s:ball['direction']['y']
 
-    if l:yy >= l:last
+    if l:yy >= l:last + 1
         " 바닥에 닿은 경우
+        " TODO gameover 처리
         " call s:removeEmptyLines()
         return 1
     endif
@@ -161,23 +162,27 @@ function! s:getCharValue(x, y)
 endfunction
 
 function! s:moveShipLeft()
-    setlocal statusline=%!VimGameCodeBreak#game#showShip(-1)
+    if s:ship['left'][0] == " "
+        let s:ship['left'] = s:ship['left'][1:]
+        setlocal statusline=%!VimGameCodeBreak#game#showShip()
+    endif
 endfunction
 
 function! s:moveShipRight()
-    setlocal statusline=%!VimGameCodeBreak#game#showShip(1)
+    if (strlen(s:ship['body']) + strlen(s:ship['left'])) < s:config['width']
+        let s:ship['left'] = " " . s:ship['left']
+        setlocal statusline=%!VimGameCodeBreak#game#showShip()
+    endif
 endfunction
 
 " game initialize
 function! s:init()
     let l:file_name = expand('%:t')
+    let s:colors_name = g:colors_name
     call s:createBuffer(l:file_name)
     call s:setLocalSetting()
     call s:setConfig()
-    call s:setColor()
     call s:drawScreen()
-    call s:drawShip()
-    execute "normal! Gzb"
 endfunction
 
 function! s:createBuffer(filename)
@@ -187,6 +192,9 @@ function! s:createBuffer(filename)
 endfunction
 
 function! s:setLocalSetting()
+
+    execute "colorscheme " . s:colors_name
+    " echo synIDattr(synIDtrans(hlID('StatusLine')), 'fg')
     setlocal bufhidden=wipe
     setlocal buftype=nofile
     setlocal buftype=nowrite
@@ -201,25 +209,14 @@ function! s:setLocalSetting()
     setlocal norelativenumber
     setlocal listchars=
     setlocal laststatus=2
+    highlight statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
     setlocal statusline=%!VimGameCodeBreak#game#showShip()
-    hi statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
+
     retab
 endfunction
 
-function! VimGameCodeBreak#game#showShip(move)
-    if a:move > 0 && (strlen(s:ship['body']) + strlen(s:ship['left'])) < s:config['width']
-        " let s:sleft = " " . s:sleft
-        let s:ship['left'] = " " . s:ship['left']
-    elseif a:move < 0 && s:ship['left'][0] == " "
-        let s:ship['left'] = s:ship['left'][1:]
-    endif
+function! VimGameCodeBreak#game#showShip()
     return s:ship['left'] . s:ship['body']
-endfunction
-
-"
-function! s:setColor()
-    " syntax region gameship start="\v\<12" end="\v21\>"
-    " highlight gameship ctermfg=yellow ctermbg=yellow guifg=yellow guibg=yellow
 endfunction
 
 function! s:drawScreen()
@@ -245,10 +242,6 @@ endfunction
 function! s:appendChars()
     let l:chars = s:config['empty_line']
     silent! %s/$/\=l:chars/
-endfunction
-
-function! s:drawShip()
-    execute "normal! Go"
 endfunction
 
 function! s:setConfig()
