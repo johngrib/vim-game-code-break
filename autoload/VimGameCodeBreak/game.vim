@@ -43,9 +43,9 @@ endfunction
 
 function! s:userInputProc(input)
     if a:input == 'h'
-        call VimGameCodeBreak#ship#setLeft()
+        call s:ship.setLeft()
     elseif a:input == 'l'
-        call VimGameCodeBreak#ship#setRight()
+        call s:ship.setRight()
     elseif a:input == ' '
         call s:createNewBall()
     endif
@@ -53,13 +53,13 @@ endfunction
 
 function! s:createNewBall()
     let l:y = line('$') - 1
-    let l:x = s:ship['center']
+    let l:x = s:ship.getCenter()
     let s:ball['x'] = l:x
     let s:ball['y'] = l:y
 endfunction
 
 function! s:updateItems()
-    call VimGameCodeBreak#ship#move()
+    call s:ship.move()
     call s:moveBall()
 endfunction
 
@@ -95,7 +95,7 @@ function! s:pongX(x, y)
     let l:yy = a:y + s:ball['direction']['y']
 
     if l:yy >= l:last + 1
-        if VimGameCodeBreak#ship#isCatchFailed(a:x)
+        if s:ship.isCatchFailed(a:x)
             " 바닥에 닿은 경우
             call s:life.decrease()
         endif
@@ -162,9 +162,9 @@ function! s:init()
 
     call s:life.set(5)
 
-    let s:ship = VimGameCodeBreak#ship#init(s:config)
+    let s:ship = VimGameCodeBreak#ship#new(s:config)
 
-    call VimGameCodeBreak#ship#show()
+    call s:ship.show()
 
 endfunction
 
