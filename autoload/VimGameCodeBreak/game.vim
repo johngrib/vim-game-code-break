@@ -1,11 +1,5 @@
 let s:config = {}
-let s:ship = {
-            \'center' : { 'x': 0, 'y': 0 },
-            \'left' : '',
-            \'body' : 'XXXXXXXXXXXXXXXXX',
-            \'direction' : 'left',
-            \'location': 0,
-            \}
+let s:ship = {}
 let s:ball_proto = { 'x': 0, 'y': 0, 'active': 0 }
 
 let s:move = {
@@ -20,7 +14,6 @@ let s:move = {
 let s:ball = {'x': -1, 'y':-1, 'direction': s:move['left-up']}
 
 function! VimGameCodeBreak#game#main()
-
 
     call s:init()
 
@@ -47,9 +40,9 @@ endfunction
 
 function! s:userInputProc(input)
     if a:input == 'h'
-        let s:ship['direction'] = 'left'
+        call VimGameCodeBreak#ship#setLeft()
     elseif a:input == 'l'
-        let s:ship['direction'] = 'right'
+        call VimGameCodeBreak#ship#setRight()
     elseif a:input == ' '
         call s:createNewBall()
     endif
@@ -57,17 +50,13 @@ endfunction
 
 function! s:createNewBall()
     let l:y = line('$') - 1
-    let l:x = s:ship['center']['x']
+    let l:x = s:ship['center']
     let s:ball['x'] = l:x
     let s:ball['y'] = l:y
 endfunction
 
 function! s:updateItems()
-    if (s:ship['direction'] == 'left')
-        call s:moveShipLeft()
-    elseif (s:ship['direction'] == 'right')
-        call s:moveShipRight()
-    endif
+    call VimGameCodeBreak#ship#move()
     call s:moveBall()
 endfunction
 
@@ -103,8 +92,7 @@ function! s:pongX(x, y)
     let l:yy = a:y + s:ball['direction']['y']
 
     if l:yy >= l:last + 1
-        let l:left_size = strlen(s:ship['left'])
-        if a:x < l:left_size || a:x > (l:left_size + strlen(s:ship['body']))
+        if VimGameCodeBreak#ship#isCatchFailed(a:x)
             " 바닥에 닿은 경우
             call VimGameCodeBreak#life#decrease()
         endif
@@ -160,20 +148,6 @@ function! s:getCharValue(x, y)
     return getline(a:y)[a:x]
 endfunction
 
-function! s:moveShipLeft()
-    if s:ship['left'][0] == " "
-        let s:ship['left'] = s:ship['left'][1:]
-        setlocal statusline=%!VimGameCodeBreak#game#showShip()
-    endif
-endfunction
-
-function! s:moveShipRight()
-    if (strlen(s:ship['body']) + strlen(s:ship['left'])) < s:config['width']
-        let s:ship['left'] = " " . s:ship['left']
-        setlocal statusline=%!VimGameCodeBreak#game#showShip()
-    endif
-endfunction
-
 " game initialize
 function! s:init()
 
@@ -185,13 +159,10 @@ function! s:init()
 
     call VimGameCodeBreak#life#set(5)
 
-    setlocal statusline=%!VimGameCodeBreak#game#showShip()
+    let s:ship = VimGameCodeBreak#ship#init(s:config)
 
-endfunction
+    call VimGameCodeBreak#ship#show()
 
-
-function! VimGameCodeBreak#game#showShip()
-    return s:ship['left'] . s:ship['body']
 endfunction
 
 function! s:removeEmptyLines()
