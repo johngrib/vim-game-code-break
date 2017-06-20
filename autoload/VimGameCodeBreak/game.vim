@@ -1,6 +1,7 @@
 let s:config = {}
 let s:ship = {}
 let s:ball_proto = { 'x': 0, 'y': 0, 'active': 0 }
+let s:life = {}
 
 let s:move = {
             \ 'left-up'    : { 'x' : -1, 'y' : -1 },
@@ -15,6 +16,8 @@ let s:ball = {'x': -1, 'y':-1, 'direction': s:move['left-up']}
 
 function! VimGameCodeBreak#game#main()
 
+    let s:life = VimGameCodeBreak#life#new()
+
     call s:init()
 
     execute "normal! G0zb"
@@ -25,12 +28,12 @@ function! VimGameCodeBreak#game#main()
         call s:userInputProc(l:input)
         call s:updateItems()
 
-        if VimGameCodeBreak#life#isGameOver()
+        if s:life.isGameOver()
             echo 'GAME OVER'
             let s:loop = -1
         endif
 
-        echo "LIFE : " . VimGameCodeBreak#life#get()
+        echo "LIFE : " . s:life.get()
 
         sleep 30ms
         redraw
@@ -94,7 +97,7 @@ function! s:pongX(x, y)
     if l:yy >= l:last + 1
         if VimGameCodeBreak#ship#isCatchFailed(a:x)
             " 바닥에 닿은 경우
-            call VimGameCodeBreak#life#decrease()
+            call s:life.decrease()
         endif
         return 1
     endif
@@ -157,7 +160,7 @@ function! s:init()
 
     call VimGameCodeBreak#init#drawScreen(s:config)
 
-    call VimGameCodeBreak#life#set(5)
+    call s:life.set(5)
 
     let s:ship = VimGameCodeBreak#ship#init(s:config)
 
