@@ -110,12 +110,16 @@ function! s:pongX(x, y)
     if s:getCharValue(a:x, l:yy) != ' '
         " 글자에 닿은 경우
         if l:yy < line('$')
-            execute "normal! " . l:yy . "gg0" . a:x . "lviWr G0"
+            call s:removeWord(a:x, l:yy)
         endif
         return 1
     endif
 
     return 0
+endfunction
+
+function! s:removeWord(x, y)
+    execute "normal! " . a:y . "gg0" . a:x . "lviWr G0"
 endfunction
 
 " ball 의 Y axis 충돌 처리를 한다
