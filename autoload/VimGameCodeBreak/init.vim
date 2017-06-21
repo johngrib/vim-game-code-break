@@ -4,7 +4,7 @@ function! VimGameCodeBreak#init#getInitConfig()
 
     let l:config['width']      = winwidth(0)
     let l:config['height']     = winheight(0)
-    let l:config['empty_line'] = repeat(' ', l:config['width'])
+    let l:config['empty_line'] = repeat(' ', l:config['width'] + 1)
 
     return l:config
 
