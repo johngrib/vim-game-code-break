@@ -20,6 +20,7 @@ function! VimGameCodeBreak#game#main()
 
     call s:init()
 
+    call s:removeEmptyLines()
     execute "normal! G0zb"
 
     let s:loop = 1
@@ -104,6 +105,7 @@ function! s:pongX(x, y)
 
     if a:y <= (l:last - s:config['height'])
         " 천장에 닿은 경우
+        call s:removeEmptyLines()
         return 1
     endif
 
