@@ -49,6 +49,9 @@ function! s:userInputProc(input)
         call s:ship.setRight()
     elseif a:input == ' '
         call s:createNewBall()
+    elseif a:input == 'q'
+        call s:quit()
+        call VimGameCodeBreak#compatiblity#quit()
     endif
 endfunction
 
@@ -157,8 +160,11 @@ function! s:getCharValue(x, y)
     return getline(a:y)[a:x]
 endfunction
 
+
 " game initialize
 function! s:init()
+
+    call VimGameCodeBreak#compatiblity#init(expand('%'))
 
     call VimGameCodeBreak#init#createBuffer()
 
@@ -183,4 +189,8 @@ function! s:drawChar(x, y, char)
     let l:row = getline(a:y)
     let l:newRow = l:row[0:(a:x - 1)] . a:char . l:row[(a:x + 1):]
     call setline(a:y, l:newRow)
+endfunction
+
+function! s:quit()
+    let s:loop = -1
 endfunction

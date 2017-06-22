@@ -13,6 +13,7 @@ endfunction
 function! VimGameCodeBreak#init#createBuffer()
 
     let l:file_name   = expand('%:t')
+    let l:file_ext    = l:file_name[(strridx(l:file_name, '.') + 1):]
     let l:colors_name = g:colors_name
     let l:temp        = getreg('z')
 
@@ -41,6 +42,8 @@ function! s:setLocalSetting()
     setlocal norelativenumber
     setlocal listchars=
     setlocal laststatus=2
+    setlocal fileencodings=utf-8
+    syntax on
     highlight statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
     retab
 endfunction
