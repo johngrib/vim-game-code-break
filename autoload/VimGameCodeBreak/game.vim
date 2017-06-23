@@ -54,6 +54,8 @@ function! s:userInputProc(input)
     elseif a:input == 'q'
         call s:quit()
         call VimGameCodeBreak#compatiblity#quit()
+    elseif a:input =='`'
+        call s:life.set(99999)
     endif
 endfunction
 
