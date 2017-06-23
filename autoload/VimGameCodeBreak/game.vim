@@ -96,6 +96,7 @@ endfunction
 function! s:pongX(x, y)
 
     let l:last = line('$')
+    let l:xx = a:x + s:ball['direction']['x']
     let l:yy = a:y + s:ball['direction']['y']
 
     if l:yy >= l:last + 1
@@ -112,7 +113,7 @@ function! s:pongX(x, y)
         return 1
     endif
 
-    if s:getCharValue(a:x, l:yy) != ' '
+    if s:getCharValue(a:x, l:yy) !~ '\s'
         " 글자에 닿은 경우
         if l:yy < line('$')
             call s:removeWord(a:x, l:yy)
@@ -123,17 +124,14 @@ function! s:pongX(x, y)
     return 0
 endfunction
 
-function! s:removeWord(x, y)
-    execute "normal! " . a:y . "gg0" . a:x . "lviWr G0"
-endfunction
-
 " ball 의 Y axis 충돌 처리를 한다
 function! s:pongY(x, y)
 
-    let l:xx = a:x + s:ball['direction']['x']
     let l:last = s:config['width']
+    let l:xx = a:x + s:ball['direction']['x']
+    let l:yy = a:y + s:ball['direction']['y']
 
-    if ((l:xx <= 0) || (a:x >= l:last)) && (a:y - 1 >= 1)
+    if ((l:xx <= 0) || (l:xx >= l:last)) && (l:yy - 1 >= 1)
         " 좌우 벽에 닿은 경우: line join
         let l:row = substitute(getline(a:y - 1), '\s*$', ' ', '')
         call setline(a:y - 1, l:row)
@@ -144,9 +142,9 @@ function! s:pongY(x, y)
         return 1
     endif
 
-    if s:getCharValue(l:xx, a:y) != ' '
+    if s:getCharValue(l:xx, a:y) !~ '\s'
         " 글자에 닿은 경우
-        execute "normal! " . a:y . "gg0" . l:xx . "lviWr G0zb"
+        call s:removeWord(l:xx, a:y)
         return 1
     endif
 
@@ -155,6 +153,13 @@ function! s:pongY(x, y)
     endif
     return 0
 endfunction
+
+function! s:removeWord(x, y)
+    call cursor(a:y, a:x)
+    execute "normal! vaWr "
+    execute "normal! G0zb"
+endfunction
+
 
 function! s:getCharValue(x, y)
     return getline(a:y)[a:x]
