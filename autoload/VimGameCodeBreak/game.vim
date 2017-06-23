@@ -110,6 +110,7 @@ function! s:pongX(x, y)
     if a:y <= (l:last - s:config['height'])
         " 천장에 닿은 경우
         call s:removeEmptyLines()
+        execute "normal! G0zb"
         return 1
     endif
 
@@ -186,7 +187,7 @@ function! s:init()
 endfunction
 
 function! s:removeEmptyLines()
-    silent! 0,$-10g/^\s*$/d
+    execute "silent! $-" . s:config['height'] . ",$-5g/^\\s*$/d"
 endfunction
 
 
