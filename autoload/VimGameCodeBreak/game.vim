@@ -99,7 +99,7 @@ function! s:pongX(x, y)
     let l:xx = a:x + s:ball['direction']['x']
     let l:yy = a:y + s:ball['direction']['y']
 
-    if l:yy >= l:last + 1
+    if a:y >= l:last
         if s:ship.isCatchFailed(a:x)
             " 바닥에 닿은 경우
             call s:life.decrease()
@@ -131,7 +131,7 @@ function! s:pongY(x, y)
     let l:xx = a:x + s:ball['direction']['x']
     let l:yy = a:y + s:ball['direction']['y']
 
-    if ((l:xx <= 0) || (l:xx >= l:last)) && (l:yy - 1 >= 1)
+    if ((l:xx <= 0) || (l:xx >= l:last)) && (l:yy - 1 >= 1) && (a:y < line('$-5'))
         " 좌우 벽에 닿은 경우: line join
         let l:row = substitute(getline(a:y - 1), '\s*$', ' ', '')
         call setline(a:y - 1, l:row)
