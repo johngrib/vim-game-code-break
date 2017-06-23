@@ -49,6 +49,7 @@ function! s:setLocalSetting()
 endfunction
 
 function! VimGameCodeBreak#init#drawScreen(config)
+    call s:removeEmptyLines()
     execute "normal! Go"
     let l:width = a:config['width']
     let l:last_line = line('$')
@@ -66,3 +67,8 @@ endfunction
 function! s:appendChars(chars)
     silent! %s/$/\=a:chars/
 endfunction
+
+function! s:removeEmptyLines()
+    silent! g/^\s*$/d
+endfunction
+
