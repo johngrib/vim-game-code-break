@@ -20,6 +20,8 @@ function! VimGameCodeBreak#game#main()
 
     call s:init()
 
+    call s:life.set(5)
+
     call s:removeEmptyLines()
     execute "normal! G0zb"
 
@@ -29,15 +31,15 @@ function! VimGameCodeBreak#game#main()
         call s:userInputProc(l:input)
         call s:updateItems()
 
+        sleep 30ms
+        redraw
+
         if s:life.isGameOver()
             echo 'GAME OVER'
             let s:loop = -1
+        else
+            echo "LIFE : " . s:life.get()
         endif
-
-        echo "LIFE : " . s:life.get()
-
-        sleep 30ms
-        redraw
     endwhile
 
 endfunction
@@ -177,8 +179,6 @@ function! s:init()
     let s:config = VimGameCodeBreak#init#getInitConfig()
 
     call VimGameCodeBreak#init#drawScreen(s:config)
-
-    call s:life.set(5)
 
     let s:ship = VimGameCodeBreak#ship#new(s:config)
 
