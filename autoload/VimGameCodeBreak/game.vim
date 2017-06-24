@@ -12,7 +12,9 @@ let s:move = {
             \ 'down'       : { 'x' : 0 , 'y' :  1 },
             \ }
 
-let s:ball = {'x': -1, 'y':-1, 'direction': s:move['left-up']}
+let s:ball = {'x': -1, 'y':-1, 'direction': s:move['left-up'], 'interval': 40, 'time_check': 0}
+
+let s:interval = 5
 
 function! VimGameCodeBreak#game#main()
 
@@ -28,10 +30,13 @@ function! VimGameCodeBreak#game#main()
     let s:loop = 1
     while s:loop == 1
         let l:input = nr2char(getchar(0))
-        call s:userInputProc(l:input)
-        call s:updateItems()
 
-        sleep 30ms
+        call s:userInputProc(l:input)
+
+        call s:updateItems(s:interval)
+
+        call s:sleep(s:interval)
+
         redraw
 
         if s:life.isGameOver()
@@ -42,6 +47,10 @@ function! VimGameCodeBreak#game#main()
         endif
     endwhile
 
+endfunction
+
+function s:sleep(time)
+    execute "sleep " . a:time . "ms"
 endfunction
 
 function! s:userInputProc(input)
@@ -66,12 +75,21 @@ function! s:createNewBall()
     let s:ball['y'] = l:y
 endfunction
 
-function! s:updateItems()
-    call s:ship.move()
-    call s:moveBall()
+function! s:updateItems(time)
+    call s:ship.move(a:time)
+    call s:moveBall(a:time)
 endfunction
 
-function! s:moveBall()
+function! s:moveBall(time)
+
+    let s:ball['time_check'] = s:ball['time_check'] - a:time
+    if s:ball['time_check'] > 0
+        return
+    endif
+
+    if s:ball['time_check'] <= 0
+        let s:ball['time_check'] = s:ball['interval']
+    endif
 
     if s:ball['x'] == -1 || s:ball['y'] == -1
         return

@@ -23,6 +23,9 @@ function! VimGameCodeBreak#ship#new(config)
     let s:ship['getCenter'] = funcref('<SID>getCenter')
     let s:ship['isCatchFailed'] = funcref('<SID>isCatchFailed')
 
+    let s:ship['interval']   = 30
+    let s:ship['time_check'] = 0
+
     return s:ship
 endfunction
 
@@ -42,14 +45,37 @@ function! s:setRight()
     let s:ship['move'] = s:ship['moveRight']
 endfunction
 
-function! s:moveShipLeft()
+function! s:timeCheck(time)
+    let s:ship['time_check'] = s:ship['time_check'] - a:time
+    if s:ship['time_check'] > 0
+        return 0
+    endif
+
+    if s:ship['time_check'] <= 0
+        let s:ship['time_check'] = s:ship['interval']
+    endif
+
+    return 1
+endfunction
+
+function! s:moveShipLeft(time)
+
+    if s:timeCheck(a:time) == 0
+        return
+    endif
+
     if s:left[0] == " "
         let s:left = s:left[1:]
         call s:show()
     endif
 endfunction
 
-function! s:moveShipRight()
+function! s:moveShipRight(time)
+
+    if s:timeCheck(a:time) == 0
+        return
+    endif
+
     if (s:bodySize() + s:leftSize()) < s:config['width']
         let s:left = " " . s:left
         call s:show()
