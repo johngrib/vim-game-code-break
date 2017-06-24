@@ -220,3 +220,9 @@ endfunction
 function! s:quit()
     let s:loop = -1
 endfunction
+
+" https://vi.stackexchange.com/questions/3832/why-doesnt-vimscript-provide-a-random-number-generator
+function! s:rand(max)
+  return str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:]) % a:max
+endfunction
+
