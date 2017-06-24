@@ -12,13 +12,14 @@ let s:move = {
             \ 'down'       : { 'x' : 0 , 'y' :  1 },
             \ }
 
-let s:ball = {'x': -1, 'y':-1, 'direction': s:move['left-up'], 'interval': 40, 'time_check': 0}
+let s:ball = {}
 
 let s:interval = 5
 
 function! VimGameCodeBreak#game#main()
 
     let s:life = VimGameCodeBreak#life#new()
+    let s:ball = VimGameCodeBreak#ball#new()
 
     call s:init()
 
@@ -71,8 +72,7 @@ endfunction
 function! s:createNewBall()
     let l:y = line('$') - 1
     let l:x = s:ship.getCenter()
-    let s:ball['x'] = l:x
-    let s:ball['y'] = l:y
+    let s:ball = s:ball.create(l:x, l:y)
 endfunction
 
 function! s:updateItems(time)
@@ -82,35 +82,26 @@ endfunction
 
 function! s:moveBall(time)
 
-    let s:ball['time_check'] = s:ball['time_check'] - a:time
-    if s:ball['time_check'] > 0
+    if ! s:ball.isReady(a:time)
         return
     endif
 
-    if s:ball['time_check'] <= 0
-        let s:ball['time_check'] = s:ball['interval']
-    endif
-
-    if s:ball['x'] == -1 || s:ball['y'] == -1
-        return
-    endif
+    call s:ball.hide()
 
     let l:x = s:ball['x']
     let l:y = s:ball['y']
-    call s:drawChar(l:x, l:y, ' ')
 
-    if s:pongX(l:x, l:y) == 1
-        let s:ball['direction']['y'] = -1 * (s:ball['direction']['y'])
+    if s:pongX(l:x, l:y)
+        call s:ball.reverseY()
     endif
 
-    if s:pongY(l:x, l:y) == 1
-        let s:ball['direction']['x'] = -1 * (s:ball['direction']['x'])
+    if s:pongY(l:x, l:y)
+        call s:ball.reverseX()
     endif
 
-    let s:ball['x'] = l:x + s:ball['direction']['x']
-    let s:ball['y'] = l:y + s:ball['direction']['y']
-
-    call s:drawChar(s:ball['x'], s:ball['y'], 'O')
+    call s:ball.roll()
+    call s:ball.show()
+    " call s:drawChar(s:ball['x'], s:ball['y'], 'O')
 
 endfunction
 
@@ -118,8 +109,8 @@ endfunction
 function! s:pongX(x, y)
 
     let l:last = line('$')
-    let l:xx = a:x + s:ball['direction']['x']
-    let l:yy = a:y + s:ball['direction']['y']
+    let l:xx = s:ball.futureX()
+    let l:yy = s:ball.futureY()
 
     if a:y >= l:last
         if s:ship.isCatchFailed(a:x)
@@ -151,8 +142,8 @@ endfunction
 function! s:pongY(x, y)
 
     let l:last = s:config['width']
-    let l:xx = a:x + s:ball['direction']['x']
-    let l:yy = a:y + s:ball['direction']['y']
+    let l:xx = s:ball.futureX()
+    let l:yy = s:ball.futureY()
 
     if ((l:xx <= 0) || (l:xx >= l:last)) && (l:yy - 1 >= 1) && (a:y < line('$-5'))
         " 좌우 벽에 닿은 경우: line join
