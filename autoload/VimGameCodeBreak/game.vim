@@ -14,7 +14,7 @@ let s:move = {
 
 let s:ball = {'x': -1, 'y':-1, 'direction': s:move['left-up'], 'interval': 40, 'time_check': 0}
 
-let s:interval = "10"
+let s:interval = 5
 
 function! VimGameCodeBreak#game#main()
 
@@ -74,7 +74,7 @@ function! s:createNewBall()
 endfunction
 
 function! s:updateItems(time)
-    call s:ship.move()
+    call s:ship.move(a:time)
     call s:moveBall(a:time)
 endfunction
 
