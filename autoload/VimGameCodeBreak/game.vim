@@ -25,6 +25,7 @@ function! VimGameCodeBreak#game#main()
     let s:life = VimGameCodeBreak#life#new()
     let s:ball = VimGameCodeBreak#ball#new()
     let s:keyProc = s:initKeys()
+    let s:bounce = VimGameCodeBreak#bounce#new(s:config)
 
     call s:life.set(5)
 
@@ -117,7 +118,7 @@ function! s:pongX(x, y)
     let l:xx = s:ball.futureX()
     let l:yy = s:ball.futureY()
 
-    if a:y >= l:last
+    if s:bounce.onFloor(s:ball)
         if s:ship.isCatchFailed(a:x)
             " 바닥에 닿은 경우
             call s:life.decrease()
@@ -125,14 +126,14 @@ function! s:pongX(x, y)
         return 1
     endif
 
-    if a:y <= (l:last - s:config['height'])
+    if s:bounce.onTop(s:ball)
         " 천장에 닿은 경우
         call s:removeEmptyLines()
         call s:screen.scrollToLast()
         return 1
     endif
 
-    if s:common.getCharValue(a:x, l:yy) !~ '\s'
+    if s:bounce.onCharX(s:ball)
         " 글자에 닿은 경우
         if l:yy < line('$')
             call s:common.removeWord(a:x, l:yy)
@@ -151,27 +152,27 @@ function! s:pongY(x, y)
     let l:xx = s:ball.futureX()
     let l:yy = s:ball.futureY()
 
-    if ((l:xx <= 0) || (l:xx >= l:last)) && (l:yy - 1 >= 1) && (a:y < line('$-5'))
-        " 좌우 벽에 닿은 경우: line join
-        let l:row = substitute(getline(a:y - 1), '\s*$', ' ', '')
-        call setline(a:y - 1, l:row)
-        execute "" . (a:y - 1) . "j"
-        let l:botrow = substitute(getline(a:y - 1), '$', s:config['empty_line'], '')
-        call setline(a:y - 1, l:botrow)
-        call s:screen.scrollToLast()
+    if s:bounce.onWall(s:ball)
+        if s:bounce.inHeight(s:ball)
+            let l:row = substitute(getline(a:y - 1), '\s*$', ' ', '')
+            call setline(a:y - 1, l:row)
+            execute "" . (a:y - 1) . "j"
+            let l:botrow = substitute(getline(a:y - 1), '$', s:config['empty_line'], '')
+            call setline(a:y - 1, l:botrow)
+            call s:screen.scrollToLast()
+        endif
         return 1
     endif
 
-    if s:common.getCharValue(l:xx, a:y) !~ '\s'
-        " 글자에 닿은 경우
+    if s:bounce.onCharY(s:ball)
         call s:common.removeWord(l:xx, a:y)
         call s:screen.scrollToLast()
         return 1
     endif
 
-    if a:x >= l:last
-        return 1
-    endif
+    " if a:x >= l:last
+    "     return 1
+    " endif
     return 0
 endfunction
 
