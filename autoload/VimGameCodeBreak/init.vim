@@ -45,6 +45,12 @@ function! s:setLocalSetting()
     setlocal fileencodings=utf-8
     syntax on
     highlight statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
+
+    " 게임 시작시에 커서를 숨기고, 게임이 끝나면 커서를 복구한다
+    execute "autocmd BufLeave * set t_ve=" . &t_ve
+    execute "autocmd VimLeave * set t_ve=" . &t_ve
+    set t_ve=
+
     retab
 endfunction
 
