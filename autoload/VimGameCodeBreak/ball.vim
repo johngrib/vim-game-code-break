@@ -1,10 +1,6 @@
 let s:move = {
-            \ 'left-up'    : { 'x' : -1, 'y' : -1 },
-            \ 'left-down'  : { 'x' : -1, 'y' :  1 },
-            \ 'right-up'   : { 'x' : 1 , 'y' : -1 },
-            \ 'right-down' : { 'x' : 1 , 'y' :  1 },
-            \ 'up'         : { 'x' : 0 , 'y' : -1 },
-            \ 'down'       : { 'x' : 0 , 'y' :  1 },
+            \ 'left' : { 'x' : -1, 'y' : -1 },
+            \ 'right': { 'x' : 1 , 'y' : -1 },
             \ }
 let s:common = {}
 
@@ -16,9 +12,10 @@ function! VimGameCodeBreak#ball#new()
                 \'y': -1,
                 \'old_x': -1,
                 \'old_y': -1,
-                \'direction': s:move['left-up'],
+                \'direction': s:move['left'],
                 \'interval': 40,
-                \'time_check': 0
+                \'time_check': 0,
+                \'active': 0
                 \}
 
     let obj.create = funcref('<SID>create')
@@ -28,6 +25,7 @@ function! VimGameCodeBreak#ball#new()
     let obj.roll = funcref('<SID>roll')
     let obj.hide = funcref('<SID>hide')
     let obj.show = funcref('<SID>show')
+    let obj.kill = funcref('<SID>kill')
     let obj.reverseX = funcref('<SID>reverseX')
     let obj.reverseY = funcref('<SID>reverseY')
     let obj.futureX = funcref('<SID>futureX')
@@ -36,10 +34,16 @@ function! VimGameCodeBreak#ball#new()
     return obj
 endfunction
 
-function! s:create(x, y)
+function! s:create(x, y, dir)
     let l:ball = VimGameCodeBreak#ball#new()
     let l:ball['x'] = a:x
     let l:ball['y'] = a:y
+    let l:ball['active'] = 1
+
+    if has_key(s:move, a:dir)
+        let l:ball.direction = s:move[a:dir]
+    endif
+
     return l:ball
 endfunction
 
@@ -66,6 +70,9 @@ function! s:isInitialized() dict
 endfunction
 
 function! s:roll() dict
+    if ! self.active
+        return
+    endif
     let self.old_x = self.x
     let self.old_y = self.y
     let self.x = self.x + self.direction.x
@@ -77,6 +84,9 @@ function! s:hide() dict
 endfunction
 
 function! s:show() dict
+    if ! self.active
+        return
+    endif
     call s:common.drawChar(self.x, self.y, 'O')
 endfunction
 
@@ -94,5 +104,11 @@ endfunction
 
 function! s:futureY() dict
     return self.y + self.direction.y
+endfunction
+
+function! s:kill() dict
+    let self.active = 0
+    let self.x = -1
+    let self.y = -1
 endfunction
 
