@@ -19,69 +19,79 @@ function! VimGameCodeBreak#ball#new()
                 \'time_check': 0
                 \}
 
-    function! obj.create(x, y)
-        let l:ball = VimGameCodeBreak#ball#new()
-        let l:ball['x'] = a:x
-        let l:ball['y'] = a:y
-        return l:ball
-    endfunction
-
-    function! obj.tick(time)
-        let self.time_check = self.time_check - a:time
-    endfunction
-
-    function! obj.isReady(time)
-
-        if ! self.isInitialized()
-            return 0
-        endif
-
-        call self.tick(a:time)
-
-        if self.time_check <= 0
-            let self.time_check = self.interval
-            return 1
-        endif
-
-        return 0
-    endfunction
-
-    function! obj.isInitialized()
-        return self.x != -1 && self.y != -1
-    endfunction
-
-    function! obj.roll()
-        let self.old_x = self.x
-        let self.old_y = self.y
-        let self.x = self.x + self.direction.x
-        let self.y = self.y + self.direction.y
-    endfunction
-
-    function! obj.hide()
-        call s:drawChar(self.x, self.y, ' ')
-    endfunction
-
-    function! obj.show()
-        call s:drawChar(self.x, self.y, 'O')
-    endfunction
-
-    function! obj.reverseX()
-        let self.direction.x = -1 * self.direction.x
-    endfunction
-
-    function! obj.reverseY()
-        let self.direction.y = -1 * self.direction.y
-    endfunction
-
-    function! obj.futureX()
-        return self.x + self.direction.x
-    endfunction
-
-    function! obj.futureY()
-        return self.y + self.direction.y
-    endfunction
+    let obj.create = funcref('<SID>create')
+    let obj.tick = funcref('<SID>tick')
+    let obj.isReady = funcref('<SID>isReady')
+    let obj.isInitialized = funcref('<SID>isInitialized')
+    let obj.roll = funcref('<SID>roll')
+    let obj.hide = funcref('<SID>hide')
+    let obj.show = funcref('<SID>show')
+    let obj.reverseX = funcref('<SID>reverseX')
+    let obj.reverseY = funcref('<SID>reverseY')
+    let obj.futureX = funcref('<SID>futureX')
+    let obj.futureY = funcref('<SID>futureY')
 
     return obj
+endfunction
+
+function! s:create(x, y)
+    let l:ball = VimGameCodeBreak#ball#new()
+    let l:ball['x'] = a:x
+    let l:ball['y'] = a:y
+    return l:ball
+endfunction
+
+function! s:tick(time) dict
+    let self.time_check = self.time_check - a:time
+endfunction
+
+function! s:isReady(time) dict
+    if ! self.isInitialized()
+        return 0
+    endif
+
+    call self.tick(a:time)
+
+    if self.time_check <= 0
+        let self.time_check = self.interval
+        return 1
+    endif
+    return 0
+endfunction
+
+function! s:isInitialized() dict
+    return self.x != -1 && self.y != -1
+endfunction
+
+function! s:roll() dict
+    let self.old_x = self.x
+    let self.old_y = self.y
+    let self.x = self.x + self.direction.x
+    let self.y = self.y + self.direction.y
+endfunction
+
+function! s:hide() dict
+    call s:drawChar(self.x, self.y, ' ')
+endfunction
+
+function! s:show() dict
+    call s:drawChar(self.x, self.y, 'O')
+endfunction
+
+function! s:reverseX() dict
+    let self.direction.x = -1 * self.direction.x
+endfunction
+
+function! s:reverseY() dict
+    let self.direction.y = -1 * self.direction.y
+endfunction
+
+function! s:futureX() dict
+    return self.x + self.direction.x
+endfunction
+
+function! s:futureY() dict
+    return self.y + self.direction.y
 endfunction
 
 function! s:drawChar(x, y, char)
