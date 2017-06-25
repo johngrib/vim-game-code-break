@@ -43,6 +43,7 @@ function! s:setLocalSetting()
     setlocal listchars=
     setlocal laststatus=2
     setlocal fileencodings=utf-8
+    setlocal signcolumn=no
     syntax on
     highlight statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
 
@@ -56,7 +57,9 @@ endfunction
 
 function! VimGameCodeBreak#init#drawScreen(config)
     call s:removeEmptyLines()
-    execute "normal! Go"
+    execute "normal! G0mb"
+    execute "normal! o"
+
     let l:width = a:config['width']
     let l:last_line = line('$')
 
@@ -65,9 +68,10 @@ function! VimGameCodeBreak#init#drawScreen(config)
 
     call s:appendChars(a:config['empty_line'])
 
-    execute "normal! ggO"
-    execute "normal! S"
-    execute "normal! yy" . a:config['height'] . "pGzb"
+    execute "normal! gg0ma"
+    execute "normal! O"
+    execute "normal! " . a:config['height'] . "."
+
 endfunction
 
 function! s:appendChars(chars)
@@ -77,4 +81,5 @@ endfunction
 function! s:removeEmptyLines()
     silent! g/^\s*$/d
 endfunction
+
 

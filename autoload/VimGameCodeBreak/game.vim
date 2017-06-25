@@ -142,6 +142,10 @@ function! s:pongX(x, y)
         return 1
     endif
 
+    if s:bounce.onLimit(s:ball)
+        return 1
+    endif
+
     return 0
 endfunction
 
@@ -187,6 +191,8 @@ function! s:init()
 
     call VimGameCodeBreak#init#drawScreen(l:config)
 
+    let l:config['top'] = line("'a")
+
     let s:ship = VimGameCodeBreak#ship#new(l:config)
 
     call s:ship.show()
@@ -195,7 +201,10 @@ function! s:init()
 endfunction
 
 function! s:removeEmptyLines()
-    execute "silent! $-" . s:config['height'] . ",$-5g/^\\s*$/d"
+    call s:screen.scrollToLast()
+    if line('$') > s:config['height']
+        execute "silent! " . line('w0') . "," . (line('w$') - 5) . "g/^\\s*$/d"
+    endif
 endfunction
 
 function! s:quit()

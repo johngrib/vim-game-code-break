@@ -1,3 +1,4 @@
+
 let s:config = {}
 let s:topLine = 0
 let s:common = {}
@@ -14,6 +15,7 @@ function! VimGameCodeBreak#bounce#new(config)
     let obj.onCharY = funcref('<SID>onCharY')
     let obj.onWall = funcref('<SID>onWall')
     let obj.inHeight = funcref('<SID>inHeight')
+    let obj.onLimit = funcref('<SID>onLimit')
 
     return obj
 endfunction
@@ -42,3 +44,8 @@ endfunction
 function! s:inHeight(ball)
     return (a:ball.futureY() - 1 >= 1) && (a:ball.y < line('$') - 5)
 endfunction
+
+function! s:onLimit(ball)
+    return a:ball.y < line('w0')
+endfunction
+
