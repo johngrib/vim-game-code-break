@@ -77,9 +77,13 @@ function! s:userInputProc(input)
 endfunction
 
 function! s:createNewBall()
+    if s:ball.active
+        return
+    endif
     let l:y = line('$') - 1
     let l:x = s:ship.getCenter()
-    let s:ball = s:ball.create(l:x, l:y)
+    let s:ball = s:ball.create(l:x, l:y, s:ship.getDirection())
+
 endfunction
 
 function! s:updateItems(time)
@@ -122,6 +126,8 @@ function! s:pongX(x, y)
         if s:ship.isCatchFailed(a:x)
             " 바닥에 닿은 경우
             call s:life.decrease()
+            call s:ball.kill()
+            return 1
         endif
         return 1
     endif
