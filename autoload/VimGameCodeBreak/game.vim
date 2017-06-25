@@ -18,15 +18,15 @@ let s:interval = 5
 
 function! VimGameCodeBreak#game#main()
 
+    let s:config = s:init()
+    let s:screen = VimGameCodeBreak#screen#new(s:config)
     let s:life = VimGameCodeBreak#life#new()
     let s:ball = VimGameCodeBreak#ball#new()
-
-    call s:init()
 
     call s:life.set(5)
 
     call s:removeEmptyLines()
-    execute "normal! G0zb"
+    call s:screen.scrollToLast()
 
     let s:loop = 1
     while s:loop == 1
@@ -101,7 +101,6 @@ function! s:moveBall(time)
 
     call s:ball.roll()
     call s:ball.show()
-    " call s:drawChar(s:ball['x'], s:ball['y'], 'O')
 
 endfunction
 
@@ -123,7 +122,7 @@ function! s:pongX(x, y)
     if a:y <= (l:last - s:config['height'])
         " 천장에 닿은 경우
         call s:removeEmptyLines()
-        execute "normal! G0zb"
+        call s:screen.scrollToLast()
         return 1
     endif
 
@@ -131,6 +130,7 @@ function! s:pongX(x, y)
         " 글자에 닿은 경우
         if l:yy < line('$')
             call s:removeWord(a:x, l:yy)
+            call s:screen.scrollToLast()
         endif
         return 1
     endif
@@ -152,13 +152,14 @@ function! s:pongY(x, y)
         execute "" . (a:y - 1) . "j"
         let l:botrow = substitute(getline(a:y - 1), '$', s:config['empty_line'], '')
         call setline(a:y - 1, l:botrow)
-        execute "normal! G0zb"
+        call s:screen.scrollToLast()
         return 1
     endif
 
     if s:getCharValue(l:xx, a:y) !~ '\s'
         " 글자에 닿은 경우
         call s:removeWord(l:xx, a:y)
+        call s:screen.scrollToLast()
         return 1
     endif
 
@@ -171,7 +172,6 @@ endfunction
 function! s:removeWord(x, y)
     call cursor(a:y, a:x)
     execute "normal! vaWr "
-    execute "normal! G0zb"
 endfunction
 
 
@@ -187,14 +187,15 @@ function! s:init()
 
     call VimGameCodeBreak#init#createBuffer()
 
-    let s:config = VimGameCodeBreak#init#getInitConfig()
+    let l:config = VimGameCodeBreak#init#getInitConfig()
 
-    call VimGameCodeBreak#init#drawScreen(s:config)
+    call VimGameCodeBreak#init#drawScreen(l:config)
 
-    let s:ship = VimGameCodeBreak#ship#new(s:config)
+    let s:ship = VimGameCodeBreak#ship#new(l:config)
 
     call s:ship.show()
 
+    return l:config
 endfunction
 
 function! s:removeEmptyLines()
