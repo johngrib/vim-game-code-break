@@ -6,9 +6,11 @@ let s:move = {
             \ 'up'         : { 'x' : 0 , 'y' : -1 },
             \ 'down'       : { 'x' : 0 , 'y' :  1 },
             \ }
+let s:common = {}
 
 function! VimGameCodeBreak#ball#new()
 
+    let s:common = VimGameCodeBreak#common#new()
     let obj = {
                 \'x': -1,
                 \'y': -1,
@@ -71,11 +73,11 @@ function! s:roll() dict
 endfunction
 
 function! s:hide() dict
-    call s:drawChar(self.x, self.y, ' ')
+    call s:common.drawChar(self.x, self.y, ' ')
 endfunction
 
 function! s:show() dict
-    call s:drawChar(self.x, self.y, 'O')
+    call s:common.drawChar(self.x, self.y, 'O')
 endfunction
 
 function! s:reverseX() dict
@@ -94,8 +96,3 @@ function! s:futureY() dict
     return self.y + self.direction.y
 endfunction
 
-function! s:drawChar(x, y, char)
-    let l:row = getline(a:y)
-    let l:newRow = l:row[0:(a:x - 1)] . a:char . l:row[(a:x + 1):]
-    call setline(a:y, l:newRow)
-endfunction

@@ -13,11 +13,12 @@ let s:move = {
             \ }
 
 let s:ball = {}
-
+let s:common = {}
 let s:interval = 5
 
 function! VimGameCodeBreak#game#main()
 
+    let s:common = VimGameCodeBreak#common#new()
     let s:config = s:init()
     let s:screen = VimGameCodeBreak#screen#new(s:config)
     let s:life = VimGameCodeBreak#life#new()
@@ -36,7 +37,7 @@ function! VimGameCodeBreak#game#main()
 
         call s:updateItems(s:interval)
 
-        call s:sleep(s:interval)
+        call s:common.sleep(s:interval)
 
         redraw
 
@@ -48,10 +49,6 @@ function! VimGameCodeBreak#game#main()
         endif
     endwhile
 
-endfunction
-
-function s:sleep(time)
-    execute "sleep " . a:time . "ms"
 endfunction
 
 function! s:userInputProc(input)
@@ -126,10 +123,10 @@ function! s:pongX(x, y)
         return 1
     endif
 
-    if s:getCharValue(a:x, l:yy) !~ '\s'
+    if s:common.getCharValue(a:x, l:yy) !~ '\s'
         " 글자에 닿은 경우
         if l:yy < line('$')
-            call s:removeWord(a:x, l:yy)
+            call s:common.removeWord(a:x, l:yy)
             call s:screen.scrollToLast()
         endif
         return 1
@@ -156,9 +153,9 @@ function! s:pongY(x, y)
         return 1
     endif
 
-    if s:getCharValue(l:xx, a:y) !~ '\s'
+    if s:common.getCharValue(l:xx, a:y) !~ '\s'
         " 글자에 닿은 경우
-        call s:removeWord(l:xx, a:y)
+        call s:common.removeWord(l:xx, a:y)
         call s:screen.scrollToLast()
         return 1
     endif
@@ -168,17 +165,6 @@ function! s:pongY(x, y)
     endif
     return 0
 endfunction
-
-function! s:removeWord(x, y)
-    call cursor(a:y, a:x)
-    execute "normal! vaWr "
-endfunction
-
-
-function! s:getCharValue(x, y)
-    return getline(a:y)[a:x]
-endfunction
-
 
 " game initialize
 function! s:init()
@@ -202,19 +188,8 @@ function! s:removeEmptyLines()
     execute "silent! $-" . s:config['height'] . ",$-5g/^\\s*$/d"
 endfunction
 
-
-function! s:drawChar(x, y, char)
-    let l:row = getline(a:y)
-    let l:newRow = l:row[0:(a:x - 1)] . a:char . l:row[(a:x + 1):]
-    call setline(a:y, l:newRow)
-endfunction
-
 function! s:quit()
     let s:loop = -1
 endfunction
 
-" https://vi.stackexchange.com/questions/3832/why-doesnt-vimscript-provide-a-random-number-generator
-function! s:rand(max)
-  return str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:]) % a:max
-endfunction
 
