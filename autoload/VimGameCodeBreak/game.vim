@@ -15,6 +15,7 @@ let s:move = {
 let s:ball = {}
 let s:common = {}
 let s:interval = 5
+let s:keyProc = {}
 
 function! VimGameCodeBreak#game#main()
 
@@ -23,6 +24,7 @@ function! VimGameCodeBreak#game#main()
     let s:screen = VimGameCodeBreak#screen#new(s:config)
     let s:life = VimGameCodeBreak#life#new()
     let s:ball = VimGameCodeBreak#ball#new()
+    let s:keyProc = s:initKeys()
 
     call s:life.set(5)
 
@@ -51,18 +53,25 @@ function! VimGameCodeBreak#game#main()
 
 endfunction
 
-function! s:userInputProc(input)
-    if a:input == 'h'
-        call s:ship.setLeft()
-    elseif a:input == 'l'
-        call s:ship.setRight()
-    elseif a:input == ' '
-        call s:createNewBall()
-    elseif a:input == 'q'
+function! s:initKeys()
+    let key = {}
+    let key['h'] = s:ship.setLeft
+    let key['l'] = s:ship.setRight
+    let key[' '] = funcref('<SID>createNewBall')
+    let key['`'] = funcref(s:life.set, [99999])
+
+    function key.q()
         call s:quit()
         call VimGameCodeBreak#compatiblity#quit()
-    elseif a:input =='`'
-        call s:life.set(99999)
+    endfunction
+
+    return key
+
+endfunction
+
+function! s:userInputProc(input)
+    if has_key(s:keyProc, a:input)
+        call s:keyProc[a:input]()
     endif
 endfunction
 
