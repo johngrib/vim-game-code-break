@@ -10,19 +10,24 @@ function! VimGameCodeBreak#init#getInitConfig()
 
 endfunction
 
-function! VimGameCodeBreak#init#createBuffer()
+function! VimGameCodeBreak#init#createBuffer(config)
 
     let l:file_name   = expand('%:t')
     let l:file_ext    = l:file_name[(strridx(l:file_name, '.') + 1):]
     let l:colors_name = g:colors_name
-    let l:temp        = getreg('z')
 
-    execute "normal! ggVG\"zy"
+    let l:textList = getbufline('%', 1, '$')
+
     silent edit `='VIM-GAME-CODE-BREAK-' . l:file_name`
-    execute "normal! \"zp"
+
+    call setline(1, l:textList)
+
+    %g/^\s*$/d
+
+    let l:textList = getbufline('%', 1, '$')
+
     execute "colorscheme " . l:colors_name
 
-    call setreg('z', l:temp)
     call s:setLocalSetting()
 
 endfunction

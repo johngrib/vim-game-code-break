@@ -191,10 +191,8 @@ function! s:init()
 
     call VimGameCodeBreak#compatiblity#init(expand('%'))
 
-    call VimGameCodeBreak#init#createBuffer()
-
     let l:config = VimGameCodeBreak#init#getInitConfig()
-
+    call VimGameCodeBreak#init#createBuffer(l:config)
     call VimGameCodeBreak#init#drawScreen(l:config)
 
     let l:config['top'] = line("'a")
