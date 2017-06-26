@@ -28,6 +28,12 @@ endfunction
 
 function! s:removeWord(x, y)
     call cursor(a:y, a:x)
+    let l:pos = getcurpos()
+
+    if l:pos[2] != a:x
+        return
+    endif
+
     let l:word = expand('<cWORD>')
     execute "normal! vaWr "
     return l:word
