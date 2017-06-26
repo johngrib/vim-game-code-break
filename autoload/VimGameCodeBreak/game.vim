@@ -198,7 +198,7 @@ function! s:init()
     call VimGameCodeBreak#init#createBuffer(l:config)
     call VimGameCodeBreak#init#drawScreen(l:config)
 
-    let l:config['top'] = line("'a")
+    let l:config['top'] = line("'a") + 1
 
     let s:ship = VimGameCodeBreak#ship#new(l:config)
 
