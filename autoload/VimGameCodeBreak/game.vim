@@ -16,6 +16,7 @@ let s:ball = {}
 let s:common = {}
 let s:interval = 5
 let s:keyProc = {}
+let s:godMode = 0
 
 function! VimGameCodeBreak#game#main()
 
@@ -48,7 +49,7 @@ function! VimGameCodeBreak#game#main()
             echo 'GAME OVER'
             let s:loop = -1
         else
-            echo "LIFE : " . s:life.get()
+            echo "LIFE : " . s:life.get() . "    " . (s:godMode ? "GOD MODE" : "")
         endif
     endwhile
 
@@ -60,6 +61,8 @@ function! s:initKeys()
     let key['l'] = s:ship.setRight
     let key[' '] = funcref('<SID>createNewBall')
     let key['`'] = funcref(s:life.set, [99999])
+    let key[']'] = funcref('<SID>enableGodMode')
+    let key['['] = funcref('<SID>disableGodMode')
 
     function key.q()
         call s:quit()
@@ -123,7 +126,7 @@ function! s:pongX(x, y)
     let l:yy = s:ball.futureY()
 
     if s:bounce.onFloor(s:ball)
-        if s:ship.isCatchFailed(a:x)
+        if s:ship.isCatchFailed(a:x) && !s:godMode
             " 바닥에 닿은 경우
             call s:life.decrease()
             call s:ball.kill()
@@ -215,4 +218,10 @@ function! s:quit()
     let s:loop = -1
 endfunction
 
+function! s:enableGodMode()
+    let s:godMode = 1
+endfunction
 
+function! s:disableGodMode()
+    let s:godMode = 0
+endfunction
