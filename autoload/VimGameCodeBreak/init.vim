@@ -73,8 +73,8 @@ function! VimGameCodeBreak#init#drawScreen(config)
 
     call s:appendChars(a:config['empty_line'])
 
+    execute "normal! ggO"
     execute "normal! gg0ma"
-    execute "normal! O"
     execute "normal! " . a:config['height'] . "."
 
 endfunction
