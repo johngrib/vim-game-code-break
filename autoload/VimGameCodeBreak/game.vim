@@ -22,12 +22,17 @@ function! VimGameCodeBreak#game#main()
 
     let s:common = VimGameCodeBreak#common#new()
     let s:config = s:init()
+
     let s:screen = VimGameCodeBreak#screen#new(s:config)
-    let s:life = VimGameCodeBreak#life#new(5)
-    let s:ball = VimGameCodeBreak#ball#new()
-    let s:keyProc = s:initKeys()
     let s:bounce = VimGameCodeBreak#bounce#new(s:config)
 
+    let s:life = VimGameCodeBreak#life#new(5)
+    let s:ship = VimGameCodeBreak#ship#new(s:config)
+    let s:ball = VimGameCodeBreak#ball#new()
+
+    let s:keyProc = s:initKeys()
+
+    call s:ship.show()
     call s:removeEmptyLines()
     call s:screen.scrollToLast()
 
@@ -200,10 +205,6 @@ function! s:init()
     call VimGameCodeBreak#init#drawScreen(l:config)
 
     let l:config['top'] = line("'a") + 1
-
-    let s:ship = VimGameCodeBreak#ship#new(l:config)
-
-    call s:ship.show()
 
     return l:config
 endfunction
