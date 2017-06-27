@@ -23,12 +23,10 @@ function! VimGameCodeBreak#game#main()
     let s:common = VimGameCodeBreak#common#new()
     let s:config = s:init()
     let s:screen = VimGameCodeBreak#screen#new(s:config)
-    let s:life = VimGameCodeBreak#life#new()
+    let s:life = VimGameCodeBreak#life#new(5)
     let s:ball = VimGameCodeBreak#ball#new()
     let s:keyProc = s:initKeys()
     let s:bounce = VimGameCodeBreak#bounce#new(s:config)
-
-    call s:life.set(5)
 
     call s:removeEmptyLines()
     call s:screen.scrollToLast()
@@ -38,21 +36,24 @@ function! VimGameCodeBreak#game#main()
         let l:input = nr2char(getchar(0))
 
         call s:userInputProc(l:input)
-
         call s:updateItems(s:interval)
-
         call s:common.sleep(s:interval)
 
         redraw
 
         if s:life.isGameOver()
             echo 'GAME OVER'
-            let s:loop = -1
-        else
-            echo "LIFE : " . s:life.get() . "    " . (s:godMode ? "GOD MODE" : "")
+            break
         endif
+
+        call s:showStatus()
+
     endwhile
 
+endfunction
+
+function! s:showStatus()
+    echo "LIFE : " . s:life.get() . "    " . (s:godMode ? "GOD MODE" : "")
 endfunction
 
 function! s:initKeys()
