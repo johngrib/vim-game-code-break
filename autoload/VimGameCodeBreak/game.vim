@@ -17,6 +17,7 @@ let s:common = {}
 let s:interval = 5
 let s:keyProc = {}
 let s:godMode = 0
+let s:screen = {}
 
 function! VimGameCodeBreak#game#main()
 
@@ -33,7 +34,7 @@ function! VimGameCodeBreak#game#main()
     let s:keyProc = s:initKeys()
 
     call s:ship.show()
-    call s:removeEmptyLines()
+    call s:screen.removeEmptyLines()
     call s:screen.scrollToLast()
 
     let s:loop = 1
@@ -143,7 +144,7 @@ function! s:pongX(x, y)
 
     if s:bounce.onTop(s:ball)
         " 천장에 닿은 경우
-        call s:removeEmptyLines()
+        call s:screen.removeEmptyLines()
         call s:screen.scrollToLast()
         return 1
     endif
@@ -189,9 +190,6 @@ function! s:pongY(x, y)
         return 1
     endif
 
-    " if a:x >= l:last
-    "     return 1
-    " endif
     return 0
 endfunction
 
@@ -207,13 +205,6 @@ function! s:init()
     let l:config['top'] = line("'a") + 1
 
     return l:config
-endfunction
-
-function! s:removeEmptyLines()
-    call s:screen.scrollToLast()
-    if line('$') > s:config['height']
-        execute "silent! " . line('w0') . "," . (line('w$') - 5) . "g/^\\s*$/d"
-    endif
 endfunction
 
 function! s:quit()
