@@ -3,10 +3,19 @@ let s:move = {
             \ 'right': { 'x' : 1 , 'y' : -1 },
             \ }
 let s:common = {}
+let s:screen = {}
+let s:bounce = {}
+let s:life = {}
+let s:ship = {}
 
-function! VimGameCodeBreak#ball#new()
+function! VimGameCodeBreak#ball#new(screen, bounce, life, ship)
 
     let s:common = VimGameCodeBreak#common#new()
+    let s:screen = a:screen
+    let s:bounce = a:bounce
+    let s:life = a:life
+    let s:ship = a:ship
+
     let obj = {
                 \'x': -1,
                 \'y': -1,
@@ -35,7 +44,7 @@ function! VimGameCodeBreak#ball#new()
 endfunction
 
 function! s:create(x, y, dir)
-    let l:ball = VimGameCodeBreak#ball#new()
+    let l:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship)
     let l:ball['x'] = a:x
     let l:ball['y'] = a:y
     let l:ball['active'] = 1
