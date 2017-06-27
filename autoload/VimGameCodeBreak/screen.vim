@@ -5,13 +5,13 @@ function! VimGameCodeBreak#screen#new(config)
     let s:config = a:config
 
     let obj = {}
-    let obj.scrollToLast = function('<SID>scrollToLast')
+    let obj.scrollToLast = funcref('VimGameCodeBreak#screen#scrollToLast')
 
     return obj
 
 endfunction
 
-function! s:scrollToLast() dict
+function! VimGameCodeBreak#screen#scrollToLast()
     execute "normal! G0zb"
 endfunction
 
