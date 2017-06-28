@@ -22,7 +22,7 @@ function! VimGameCodeBreak#ship#new(config)
     let s:ship['moveRight'] = funcref('<SID>moveShipRight')
 
     let s:ship['getCenter'] = funcref('<SID>getCenter')
-    let s:ship['isCatchFailed'] = funcref('<SID>isCatchFailed')
+    let s:ship['isCatchSuccess'] = funcref('<SID>isCatchSuccess')
     let s:ship['getDirection'] = funcref('<SID>getDirection')
 
     let s:ship['interval']   = 30
@@ -86,9 +86,9 @@ function! s:moveShipRight(time)
     endif
 endfunction
 
-function! s:isCatchFailed(x)
+function! s:isCatchSuccess(x)
     let l:left_size = s:leftSize()
-    return (a:x < l:left_size) || (a:x > (l:left_size + s:bodySize()))
+    return (a:x >= l:left_size) && (a:x <= (l:left_size + s:bodySize()))
 endfunction
 
 function! s:leftSize()

@@ -152,7 +152,7 @@ function! s:pongX() dict
     let l:yy = self.futureY()
 
     if s:bounce.onFloor(self)
-        if s:ship.isCatchFailed(self.x)
+        if !s:ship.isCatchSuccess(self.x)
             " 바닥에 닿은 경우
             call s:life.decrease()
             call self.kill()
