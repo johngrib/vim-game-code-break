@@ -112,11 +112,11 @@ function! s:moveBall(time)
     let l:x = s:ball['x']
     let l:y = s:ball['y']
 
-    if s:pongX(l:x, l:y)
+    if s:pongX(s:ball)
         call s:ball.reverseY()
     endif
 
-    if s:pongY(l:x, l:y)
+    if s:pongY(s:ball)
         call s:ball.reverseX()
     endif
 
@@ -126,39 +126,39 @@ function! s:moveBall(time)
 endfunction
 
 " ball 의 X axis 충돌 처리를 한다
-function! s:pongX(x, y)
+function! s:pongX(item)
 
     let l:last = line('$')
-    let l:xx = s:ball.futureX()
-    let l:yy = s:ball.futureY()
+    let l:xx = a:item.futureX()
+    let l:yy = a:item.futureY()
 
-    if s:bounce.onFloor(s:ball)
-        if s:ship.isCatchFailed(a:x) && !s:godMode
+    if s:bounce.onFloor(a:item)
+        if s:ship.isCatchFailed(a:item.x) && !s:godMode
             " 바닥에 닿은 경우
             call s:life.decrease()
-            call s:ball.kill()
+            call a:item.kill()
             return 1
         endif
         return 1
     endif
 
-    if s:bounce.onTop(s:ball)
+    if s:bounce.onTop(a:item)
         " 천장에 닿은 경우
         call s:screen.removeEmptyLines()
         call s:screen.scrollToLast()
         return 1
     endif
 
-    if s:bounce.onCharX(s:ball)
+    if s:bounce.onCharX(a:item)
         " 글자에 닿은 경우
         if l:yy < line('$')
-            call s:common.removeWord(a:x, l:yy)
+            call s:common.removeWord(a:item.x, l:yy)
             call s:screen.scrollToLast()
         endif
         return 1
     endif
 
-    if s:bounce.onLimit(s:ball)
+    if s:bounce.onLimit(a:item)
         return 1
     endif
 
@@ -166,26 +166,26 @@ function! s:pongX(x, y)
 endfunction
 
 " ball 의 Y axis 충돌 처리를 한다
-function! s:pongY(x, y)
+function! s:pongY(item)
 
     let l:last = s:config['width']
-    let l:xx = s:ball.futureX()
-    let l:yy = s:ball.futureY()
+    let l:xx = a:item.futureX()
+    let l:yy = a:item.futureY()
 
-    if s:bounce.onWall(s:ball)
-        if s:bounce.inHeight(s:ball)
-            let l:row = substitute(getline(a:y - 1), '\s*$', ' ', '')
-            call setline(a:y - 1, l:row)
-            execute "" . (a:y - 1) . "j"
-            let l:botrow = substitute(getline(a:y - 1), '$', s:config['empty_line'], '')
-            call setline(a:y - 1, l:botrow)
+    if s:bounce.onWall(a:item)
+        if s:bounce.inHeight(a:item)
+            let l:row = substitute(getline(a:item.y - 1), '\s*$', ' ', '')
+            call setline(a:item.y - 1, l:row)
+            execute "" . (a:item.y - 1) . "j"
+            let l:botrow = substitute(getline(a:item.y - 1), '$', s:config['empty_line'], '')
+            call setline(a:item.y - 1, l:botrow)
             call s:screen.scrollToLast()
         endif
         return 1
     endif
 
-    if s:bounce.onCharY(s:ball)
-        call s:common.removeWord(l:xx, a:y)
+    if s:bounce.onCharY(a:item)
+        call s:common.removeWord(l:xx, a:item.y)
         call s:screen.scrollToLast()
         return 1
     endif
