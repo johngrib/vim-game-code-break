@@ -51,6 +51,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
     let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
     let obj.hitCharXEvent = funcref('<SID>hitCharXEvent')
     let obj.hitBottomWallEvent = funcref('<SID>hitBottomWallEvent')
+    let obj.hitShipEvent = funcref('<SID>hitShipEvent')
 
     return obj
 endfunction
@@ -147,16 +148,13 @@ let s:pongXcheckList = []
 " ball 의 X axis 충돌 처리를 한다
 function! s:pongX() dict
 
-    let l:last = line('$')
-    let l:xx = self.futureX()
-    let l:yy = self.futureY()
+    if s:bounce.onFloor(self) && s:ship.isCatchSuccess(self.x)
+        return self.hitShipEvent()
+    endif
 
-    if s:bounce.onFloor(self)
-        if !s:ship.isCatchSuccess(self.x)
-            " 바닥에 닿은 경우
-            call s:life.decrease()
-            call self.kill()
-        endif
+    if s:bounce.onFloor(self) && ! s:ship.isCatchSuccess(self.x)
+        call s:life.decrease()
+        call self.kill()
         return self.reverseY()
     endif
 
@@ -178,6 +176,10 @@ function! s:pongX() dict
     endif
 
     return self.doNothing()
+endfunction
+
+function! s:hitShipEvent() dict
+    call self.reverseY()
 endfunction
 
 " ball 의 Y axis 충돌 처리를 한다
