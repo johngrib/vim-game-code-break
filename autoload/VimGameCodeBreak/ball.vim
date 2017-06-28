@@ -192,8 +192,7 @@ function! s:pongY() dict
     endif
 
     if s:bounce.onCharY(self)
-        call self.hitCharYEvent()
-        return self.reverseX()
+        return self.hitCharYEvent()
     endif
 
     return self.doNothing()
@@ -212,6 +211,7 @@ endfunction
 function! s:hitCharYEvent() dict
     call s:common.removeWord(self.futureX(), self.y)
     call s:screen.scrollToLast()
+    call self.reverseX()
 endfunction
 
 function! s:hitCharXEvent() dict
