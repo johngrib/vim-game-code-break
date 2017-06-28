@@ -3,18 +3,20 @@ let s:move = {
             \ 'right': { 'x' : 1 , 'y' : -1 },
             \ }
 let s:common = {}
+let s:config = {}
 let s:screen = {}
 let s:bounce = {}
 let s:life = {}
 let s:ship = {}
 
-function! VimGameCodeBreak#ball#new(screen, bounce, life, ship)
+function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
 
     let s:common = VimGameCodeBreak#common#new()
     let s:screen = a:screen
     let s:bounce = a:bounce
     let s:life = a:life
     let s:ship = a:ship
+    let s:config = a:config
 
     let obj = {
                 \'x': -1,
@@ -42,13 +44,14 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship)
 
     let obj.update = funcref('<SID>update')
     let obj.pongX = funcref('<SID>pongX')
+    let obj.pongY = funcref('<SID>pongY')
     let obj.doNothing = funcref('<SID>doNothing')
 
     return obj
 endfunction
 
 function! s:create(x, y, dir)
-    let l:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship)
+    let l:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let l:ball['x'] = a:x
     let l:ball['y'] = a:y
     let l:ball['active'] = 1
@@ -130,6 +133,7 @@ endfunction
 
 function! s:update() dict
     call self.pongX()
+    call self.pongY()
     return self
 endfunction
 
@@ -171,3 +175,31 @@ function! s:pongX() dict
 
     return self.doNothing()
 endfunction
+
+" ball 의 Y axis 충돌 처리를 한다
+function! s:pongY() dict
+
+    let l:xx = self.futureX()
+    let l:yy = self.futureY()
+
+    if s:bounce.onWall(self)
+        if s:bounce.inHeight(self)
+            let l:row = substitute(getline(self.y - 1), '\s*$', ' ', '')
+            call setline(self.y - 1, l:row)
+            execute "" . (self.y - 1) . "j"
+            let l:botrow = substitute(getline(self.y - 1), '$', s:config['empty_line'], '')
+            call setline(self.y - 1, l:botrow)
+            call s:screen.scrollToLast()
+        endif
+        return self.reverseX()
+    endif
+
+    if s:bounce.onCharY(self)
+        call s:common.removeWord(l:xx, self.y)
+        call s:screen.scrollToLast()
+        return self.reverseX()
+    endif
+
+    return self.doNothing()
+endfunction
+

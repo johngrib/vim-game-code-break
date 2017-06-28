@@ -29,7 +29,7 @@ function! VimGameCodeBreak#game#main()
 
     let s:life = VimGameCodeBreak#life#new(5)
     let s:ship = VimGameCodeBreak#ship#new(s:config)
-    let s:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship)
+    let s:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
 
     let s:keyProc = s:initKeys()
 
@@ -108,46 +108,12 @@ function! s:moveBall(time)
     endif
 
     call s:ball.hide()
-
     call s:ball.update()
-
-    if s:pongY(s:ball)
-        call s:ball.reverseX()
-    endif
-
     call s:ball.roll()
     call s:ball.show()
 
 endfunction
 
-
-" ball 의 Y axis 충돌 처리를 한다
-function! s:pongY(item)
-
-    let l:last = s:config['width']
-    let l:xx = a:item.futureX()
-    let l:yy = a:item.futureY()
-
-    if s:bounce.onWall(a:item)
-        if s:bounce.inHeight(a:item)
-            let l:row = substitute(getline(a:item.y - 1), '\s*$', ' ', '')
-            call setline(a:item.y - 1, l:row)
-            execute "" . (a:item.y - 1) . "j"
-            let l:botrow = substitute(getline(a:item.y - 1), '$', s:config['empty_line'], '')
-            call setline(a:item.y - 1, l:botrow)
-            call s:screen.scrollToLast()
-        endif
-        return 1
-    endif
-
-    if s:bounce.onCharY(a:item)
-        call s:common.removeWord(l:xx, a:item.y)
-        call s:screen.scrollToLast()
-        return 1
-    endif
-
-    return 0
-endfunction
 
 " game initialize
 function! s:init()
