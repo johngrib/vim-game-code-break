@@ -53,6 +53,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
     let obj.hitBottomWallEvent = funcref('<SID>hitBottomWallEvent')
     let obj.hitShipEvent = funcref('<SID>hitShipEvent')
     let obj.hitFloorEvent = funcref('<SID>hitFloorEvent')
+    let obj.hitTopEvent = funcref('<SID>hitTopEvent')
 
     return obj
 endfunction
@@ -159,9 +160,7 @@ function! s:pongX() dict
 
     if s:bounce.onTop(self)
         " 천장에 닿은 경우
-        call s:screen.removeEmptyLines()
-        call s:screen.scrollToLast()
-        return self.reverseY()
+        return self.hitTopEvent()
     endif
 
     if s:bounce.onCharX(self)
@@ -175,6 +174,12 @@ function! s:pongX() dict
     endif
 
     return self.doNothing()
+endfunction
+
+function! s:hitTopEvent() dict
+    call s:screen.removeEmptyLines()
+    call s:screen.scrollToLast()
+    call self.reverseY()
 endfunction
 
 function! s:hitShipEvent() dict
