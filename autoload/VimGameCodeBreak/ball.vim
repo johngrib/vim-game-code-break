@@ -47,6 +47,8 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
     let obj.pongY = funcref('<SID>pongY')
     let obj.doNothing = funcref('<SID>doNothing')
 
+    let obj.hitWallEvent = funcref('<SID>hitWallEvent')
+
     return obj
 endfunction
 
@@ -184,12 +186,7 @@ function! s:pongY() dict
 
     if s:bounce.onWall(self)
         if s:bounce.inHeight(self)
-            let l:row = substitute(getline(self.y - 1), '\s*$', ' ', '')
-            call setline(self.y - 1, l:row)
-            execute "" . (self.y - 1) . "j"
-            let l:botrow = substitute(getline(self.y - 1), '$', s:config['empty_line'], '')
-            call setline(self.y - 1, l:botrow)
-            call s:screen.scrollToLast()
+            call self.hitWallEvent()
         endif
         return self.reverseX()
     endif
@@ -203,3 +200,7 @@ function! s:pongY() dict
     return self.doNothing()
 endfunction
 
+function! s:hitWallEvent() dict
+    call s:screen.lineJoin(self.y - 1)
+    call s:screen.scrollToLast()
+endfunction
