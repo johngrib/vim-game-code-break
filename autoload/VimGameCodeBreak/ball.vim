@@ -40,6 +40,10 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship)
     let obj.futureX = funcref('<SID>futureX')
     let obj.futureY = funcref('<SID>futureY')
 
+    let obj.update = funcref('<SID>update')
+    let obj.pongX = funcref('<SID>pongX')
+    let obj.doNothing = funcref('<SID>doNothing')
+
     return obj
 endfunction
 
@@ -121,3 +125,49 @@ function! s:kill() dict
     let self.y = -1
 endfunction
 
+function! s:doNothing() dict
+endfunction
+
+function! s:update() dict
+    call self.pongX()
+    return self
+endfunction
+
+" ball 의 X axis 충돌 처리를 한다
+function! s:pongX() dict
+
+    let l:last = line('$')
+    let l:xx = self.futureX()
+    let l:yy = self.futureY()
+
+    if s:bounce.onFloor(self)
+        if s:ship.isCatchFailed(self.x)
+            " 바닥에 닿은 경우
+            call s:life.decrease()
+            call self.kill()
+        endif
+        return self.reverseY()
+    endif
+
+    if s:bounce.onTop(self)
+        " 천장에 닿은 경우
+        call s:screen.removeEmptyLines()
+        call s:screen.scrollToLast()
+        return self.reverseY()
+    endif
+
+    if s:bounce.onCharX(self)
+        " 글자에 닿은 경우
+        if l:yy < line('$')
+            call s:common.removeWord(self.x, l:yy)
+            call s:screen.scrollToLast()
+        endif
+        return self.reverseY()
+    endif
+
+    if s:bounce.onLimit(self)
+        return self.reverseY()
+    endif
+
+    return self.doNothing()
+endfunction

@@ -109,12 +109,7 @@ function! s:moveBall(time)
 
     call s:ball.hide()
 
-    let l:x = s:ball['x']
-    let l:y = s:ball['y']
-
-    if s:pongX(s:ball)
-        call s:ball.reverseY()
-    endif
+    call s:ball.update()
 
     if s:pongY(s:ball)
         call s:ball.reverseX()
@@ -125,45 +120,6 @@ function! s:moveBall(time)
 
 endfunction
 
-" ball 의 X axis 충돌 처리를 한다
-function! s:pongX(item)
-
-    let l:last = line('$')
-    let l:xx = a:item.futureX()
-    let l:yy = a:item.futureY()
-
-    if s:bounce.onFloor(a:item)
-        if s:ship.isCatchFailed(a:item.x) && !s:godMode
-            " 바닥에 닿은 경우
-            call s:life.decrease()
-            call a:item.kill()
-            return 1
-        endif
-        return 1
-    endif
-
-    if s:bounce.onTop(a:item)
-        " 천장에 닿은 경우
-        call s:screen.removeEmptyLines()
-        call s:screen.scrollToLast()
-        return 1
-    endif
-
-    if s:bounce.onCharX(a:item)
-        " 글자에 닿은 경우
-        if l:yy < line('$')
-            call s:common.removeWord(a:item.x, l:yy)
-            call s:screen.scrollToLast()
-        endif
-        return 1
-    endif
-
-    if s:bounce.onLimit(a:item)
-        return 1
-    endif
-
-    return 0
-endfunction
 
 " ball 의 Y axis 충돌 처리를 한다
 function! s:pongY(item)
