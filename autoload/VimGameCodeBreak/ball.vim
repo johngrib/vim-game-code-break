@@ -48,6 +48,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
     let obj.doNothing = funcref('<SID>doNothing')
 
     let obj.hitWallEvent = funcref('<SID>hitWallEvent')
+    let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
 
     return obj
 endfunction
@@ -139,6 +140,8 @@ function! s:update() dict
     return self
 endfunction
 
+let s:pongXcheckList = []
+
 " ball 의 X axis 충돌 처리를 한다
 function! s:pongX() dict
 
@@ -192,8 +195,7 @@ function! s:pongY() dict
     endif
 
     if s:bounce.onCharY(self)
-        call s:common.removeWord(l:xx, self.y)
-        call s:screen.scrollToLast()
+        call self.hitCharYEvent()
         return self.reverseX()
     endif
 
@@ -202,5 +204,10 @@ endfunction
 
 function! s:hitWallEvent() dict
     call s:screen.lineJoin(self.y - 1)
+    call s:screen.scrollToLast()
+endfunction
+
+function! s:hitCharYEvent() dict
+    call s:common.removeWord(self.futureX(), self.y)
     call s:screen.scrollToLast()
 endfunction
