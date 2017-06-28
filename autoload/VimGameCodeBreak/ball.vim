@@ -165,15 +165,18 @@ function! s:pongX() dict
 
     if s:bounce.onCharX(self)
         " 글자에 닿은 경우
-        call self.hitCharXEvent()
-        return self.reverseY()
+        return self.hitCharXEvent()
     endif
 
     if s:bounce.onLimit(self)
-        return self.reverseY()
+        return self.hitLimitEvent()
     endif
 
     return self.doNothing()
+endfunction
+
+function! s:hitLimitEvent() dict
+    call self.reverseY()
 endfunction
 
 function! s:hitTopEvent() dict
@@ -231,4 +234,5 @@ function! s:hitCharXEvent() dict
         call s:common.removeWord(self.x, self.futureY())
         call s:screen.scrollToLast()
     endif
+    call self.reverseY()
 endfunction
