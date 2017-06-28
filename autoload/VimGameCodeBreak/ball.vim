@@ -50,6 +50,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
     let obj.hitWallEvent = funcref('<SID>hitWallEvent')
     let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
     let obj.hitCharXEvent = funcref('<SID>hitCharXEvent')
+    let obj.hitBottomWallEvent = funcref('<SID>hitBottomWallEvent')
 
     return obj
 endfunction
@@ -182,14 +183,12 @@ endfunction
 " ball 의 Y axis 충돌 처리를 한다
 function! s:pongY() dict
 
-    let l:xx = self.futureX()
-    let l:yy = self.futureY()
+    if s:bounce.onWall(self) && s:bounce.inHeight(self)
+        return self.hitWallEvent()
+    endif
 
     if s:bounce.onWall(self)
-        if s:bounce.inHeight(self)
-            call self.hitWallEvent()
-        endif
-        return self.reverseX()
+        return self.hitBottomWallEvent()
     endif
 
     if s:bounce.onCharY(self)
@@ -203,6 +202,11 @@ endfunction
 function! s:hitWallEvent() dict
     call s:screen.lineJoin(self.y - 1)
     call s:screen.scrollToLast()
+    call self.reverseX()
+endfunction
+
+function! s:hitBottomWallEvent() dict
+    call self.reverseX()
 endfunction
 
 function! s:hitCharYEvent() dict
