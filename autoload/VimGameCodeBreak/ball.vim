@@ -52,6 +52,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
     let obj.hitCharXEvent = funcref('<SID>hitCharXEvent')
     let obj.hitBottomWallEvent = funcref('<SID>hitBottomWallEvent')
     let obj.hitShipEvent = funcref('<SID>hitShipEvent')
+    let obj.hitFloorEvent = funcref('<SID>hitFloorEvent')
 
     return obj
 endfunction
@@ -153,9 +154,7 @@ function! s:pongX() dict
     endif
 
     if s:bounce.onFloor(self) && ! s:ship.isCatchSuccess(self.x)
-        call s:life.decrease()
-        call self.kill()
-        return self.reverseY()
+        return self.hitFloorEvent()
     endif
 
     if s:bounce.onTop(self)
@@ -179,6 +178,12 @@ function! s:pongX() dict
 endfunction
 
 function! s:hitShipEvent() dict
+    call self.reverseY()
+endfunction
+
+function! s:hitFloorEvent() dict
+    call s:life.decrease()
+    call self.kill()
     call self.reverseY()
 endfunction
 
