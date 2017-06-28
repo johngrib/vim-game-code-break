@@ -49,6 +49,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
 
     let obj.hitWallEvent = funcref('<SID>hitWallEvent')
     let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
+    let obj.hitCharXEvent = funcref('<SID>hitCharXEvent')
 
     return obj
 endfunction
@@ -167,10 +168,7 @@ function! s:pongX() dict
 
     if s:bounce.onCharX(self)
         " 글자에 닿은 경우
-        if l:yy < line('$')
-            call s:common.removeWord(self.x, l:yy)
-            call s:screen.scrollToLast()
-        endif
+        call self.hitCharXEvent()
         return self.reverseY()
     endif
 
@@ -210,4 +208,11 @@ endfunction
 function! s:hitCharYEvent() dict
     call s:common.removeWord(self.futureX(), self.y)
     call s:screen.scrollToLast()
+endfunction
+
+function! s:hitCharXEvent() dict
+    if self.futureY() < line('$')
+        call s:common.removeWord(self.x, self.futureY())
+        call s:screen.scrollToLast()
+    endif
 endfunction
