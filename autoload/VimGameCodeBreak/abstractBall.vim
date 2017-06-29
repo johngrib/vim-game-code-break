@@ -9,7 +9,7 @@ let s:bounce = {}
 let s:life = {}
 let s:ship = {}
 
-function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
+function! VimGameCodeBreak#abstractBall#new(screen, bounce, life, ship, config)
 
     let s:common = VimGameCodeBreak#common#new()
     let s:screen = a:screen
@@ -59,7 +59,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
 endfunction
 
 function! s:create(x, y, dir)
-    let l:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
+    let l:ball = VimGameCodeBreak#abstractBall#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let l:ball['x'] = a:x
     let l:ball['y'] = a:y
     let l:ball['active'] = 1

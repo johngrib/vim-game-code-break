@@ -29,7 +29,7 @@ function! VimGameCodeBreak#game#main()
 
     let s:life = VimGameCodeBreak#life#new(5)
     let s:ship = VimGameCodeBreak#ship#new(s:config)
-    let s:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
+    let s:ball = VimGameCodeBreak#abstractBall#new(s:screen, s:bounce, s:life, s:ship, s:config)
 
     let s:keyProc = s:initKeys()
 
