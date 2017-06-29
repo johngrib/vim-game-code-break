@@ -14,6 +14,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
 
     let obj = VimGameCodeBreak#abstractBall#new(a:screen, a:bounce, a:life, a:ship, a:config)
 
+    let obj.icon = 'O'
     let obj.create = funcref('<SID>create')
     let obj.hitWallEvent = funcref('<SID>hitWallEvent')
     let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')

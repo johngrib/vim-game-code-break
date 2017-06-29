@@ -27,7 +27,8 @@ function! VimGameCodeBreak#abstractBall#new(screen, bounce, life, ship, config)
                 \'direction': l:move['left'],
                 \'interval': 40,
                 \'time_check': 0,
-                \'active': 0
+                \'active': 0,
+                \'icon': 'O'
                 \}
 
     let obj.common = VimGameCodeBreak#common#new()
@@ -106,7 +107,7 @@ function! s:show() dict
     if ! self.active
         return
     endif
-    call self.common.drawChar(self.x, self.y, 'O')
+    call self.common.drawChar(self.x, self.y, self.icon)
 endfunction
 
 function! s:reverseX() dict
