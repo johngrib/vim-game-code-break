@@ -32,6 +32,8 @@ function! VimGameCodeBreak#game#main()
     let s:ship = VimGameCodeBreak#ship#new(s:config)
     let s:ball = VimGameCodeBreak#abstractBall#new(s:screen, s:bounce, s:life, s:ship, s:config)
 
+    let s:life_item = VimGameCodeBreak#item_life#new(s:screen, s:bounce, s:life, s:ship, s:config)
+
     let s:keyProc = s:initKeys()
 
     call s:ship.show()
@@ -57,6 +59,11 @@ function! VimGameCodeBreak#game#main()
 
     endwhile
 
+endfunction
+
+function! VimGameCodeBreak#game#createLifeItem(x, y, dir)
+    let l:item = s:life_item.create(a:x, a:y, a:dir)
+    call VimGameCodeBreak#game#addItem(l:item)
 endfunction
 
 function! VimGameCodeBreak#game#addItem(item)
@@ -117,12 +124,7 @@ function! s:moveBall(time)
 
     for l:item in s:item
         call l:item.tick(a:time)
-    endfor
-
-    for l:item in s:item
-        if l:item.isReady()
-            call l:item.hide()
-        endif
+        call l:item.hide()
     endfor
 
     for l:item in s:item
@@ -133,13 +135,8 @@ function! s:moveBall(time)
     endfor
 
     for l:item in s:item
-        if l:item.isReady()
-            call l:item.show()
-        endif
-    endfor
-
-    for l:item in s:item
-        call l:item.tock(a:time)
+        call l:item.show()
+        call l:item.tock()
     endfor
 
 endfunction

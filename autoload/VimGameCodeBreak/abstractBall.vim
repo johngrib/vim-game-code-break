@@ -72,7 +72,7 @@ function! s:tick(time) dict
     let self.time_check = self.time_check - a:time
 endfunction
 
-function! s:tock(time) dict
+function! s:tock() dict
     if self.time_check <= 0
         let self.time_check = self.interval
     endif

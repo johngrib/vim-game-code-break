@@ -4,7 +4,7 @@ let s:bounce = {}
 let s:life = {}
 let s:ship = {}
 
-function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
+function! VimGameCodeBreak#item_life#new(screen, bounce, life, ship, config)
 
     let s:screen = a:screen
     let s:bounce = a:bounce
@@ -14,7 +14,8 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
 
     let obj = VimGameCodeBreak#abstractBall#new(a:screen, a:bounce, a:life, a:ship, a:config)
 
-    let obj.icon = 'O'
+    let obj.icon = 'L'
+    let obj.interval = 10
     let obj.create = funcref('<SID>create')
     let obj.hitWallEvent = funcref('<SID>hitWallEvent')
     let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
@@ -29,16 +30,16 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
 endfunction
 
 function! s:create(x, y, dir) dict
-    let l:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
-    let l:ball['x'] = a:x
-    let l:ball['y'] = a:y
-    let l:ball['active'] = 1
+    let l:item = VimGameCodeBreak#item_life#new(s:screen, s:bounce, s:life, s:ship, s:config)
+    let l:item['x'] = a:x
+    let l:item['y'] = a:y
+    let l:item['active'] = 1
 
     if has_key(self.move, a:dir)
-        let l:ball.direction = self.move[a:dir]
+        let l:item.direction = self.move[a:dir]
     endif
 
-    return l:ball
+    return l:item
 endfunction
 
 function! s:hitWallEvent() dict
@@ -55,12 +56,7 @@ endfunction
 
 function! s:hitCharXEvent() dict
     if self.futureY() < line('$')
-        let l:word = self.common.removeWord(self.x, self.futureY())
-
-        if self.common.rand(100) < strlen(l:word)
-            call VimGameCodeBreak#game#createLifeItem(self.x, self.y, 'right-down')
-        endif
-
+        call self.common.removeWord(self.x, self.futureY())
         call s:screen.scrollToLast()
     endif
     call self.reverseY()
@@ -71,22 +67,18 @@ function! s:hitBottomWallEvent() dict
 endfunction
 
 function! s:hitShipEvent() dict
-    call self.reverseY()
+    call s:life.increase()
+    call self.kill()
 endfunction
 
 function! s:hitFloorEvent() dict
-    call s:life.decrease()
     call self.kill()
-    call self.reverseY()
 endfunction
 
 function! s:hitTopEvent() dict
-    call s:screen.removeEmptyLines()
-    call s:screen.scrollToLast()
     call self.reverseY()
 endfunction
 
 function! s:hitLimitEvent() dict
     call self.reverseY()
 endfunction
-
