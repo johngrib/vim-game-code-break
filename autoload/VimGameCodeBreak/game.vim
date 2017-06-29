@@ -104,6 +104,8 @@ function! s:createNewBall()
     let s:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let s:ball = s:ball.create(l:x, l:y, s:ship.getDirection())
 
+    call VimGameCodeBreak#game#addItem(s:ball)
+
 endfunction
 
 function! s:updateItems(time)
@@ -113,14 +115,16 @@ endfunction
 
 function! s:moveBall(time)
 
-    if ! s:ball.isReady(a:time)
-        return
-    endif
+    for l:item in s:item
+        if ! l:item.isReady(a:time)
+            continue
+        endif
 
-    call s:ball.hide()
-    call s:ball.update()
-    call s:ball.roll()
-    call s:ball.show()
+        call l:item.hide()
+        call l:item.update()
+        call l:item.roll()
+        call l:item.show()
+    endfor
 
 endfunction
 
