@@ -63,6 +63,10 @@ function! VimGameCodeBreak#game#addItem(item)
     let s:item += [a:item]
 endfunction
 
+function! VimGameCodeBreak#game#getItemList()
+    return s:item
+endfunction
+
 function! s:showStatus()
     echo "LIFE : " . s:life.get() . "    " . (s:godMode ? "GOD MODE" : "")
 endfunction
