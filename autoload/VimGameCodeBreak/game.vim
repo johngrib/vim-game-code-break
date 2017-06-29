@@ -18,6 +18,7 @@ let s:interval = 5
 let s:keyProc = {}
 let s:godMode = 0
 let s:screen = {}
+let s:item = []
 
 function! VimGameCodeBreak#game#main()
 
@@ -56,6 +57,10 @@ function! VimGameCodeBreak#game#main()
 
     endwhile
 
+endfunction
+
+function! VimGameCodeBreak#game#addItem(item)
+    let s:item += [a:item]
 endfunction
 
 function! s:showStatus()
