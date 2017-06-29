@@ -116,14 +116,30 @@ endfunction
 function! s:moveBall(time)
 
     for l:item in s:item
-        if ! l:item.isReady(a:time)
-            continue
-        endif
+        call l:item.tick(a:time)
+    endfor
 
-        call l:item.hide()
-        call l:item.update()
-        call l:item.roll()
-        call l:item.show()
+    for l:item in s:item
+        if l:item.isReady()
+            call l:item.hide()
+        endif
+    endfor
+
+    for l:item in s:item
+        if l:item.isReady()
+            call l:item.update()
+            call l:item.roll()
+        endif
+    endfor
+
+    for l:item in s:item
+        if l:item.isReady()
+            call l:item.show()
+        endif
+    endfor
+
+    for l:item in s:item
+        call l:item.tock(a:time)
     endfor
 
 endfunction

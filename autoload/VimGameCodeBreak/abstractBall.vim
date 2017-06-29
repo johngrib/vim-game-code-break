@@ -35,6 +35,7 @@ function! VimGameCodeBreak#abstractBall#new(screen, bounce, life, ship, config)
     let obj.move = l:move
     let obj.create = funcref('<SID>create')
     let obj.tick = funcref('<SID>tick')
+    let obj.tock = funcref('<SID>tock')
     let obj.isReady = funcref('<SID>isReady')
     let obj.isInitialized = funcref('<SID>isInitialized')
     let obj.roll = funcref('<SID>roll')
@@ -71,18 +72,17 @@ function! s:tick(time) dict
     let self.time_check = self.time_check - a:time
 endfunction
 
-function! s:isReady(time) dict
+function! s:tock(time) dict
+    if self.time_check <= 0
+        let self.time_check = self.interval
+    endif
+endfunction
+
+function! s:isReady() dict
     if ! self.isInitialized()
         return 0
     endif
-
-    call self.tick(a:time)
-
-    if self.time_check <= 0
-        let self.time_check = self.interval
-        return 1
-    endif
-    return 0
+    return self.time_check <= 0
 endfunction
 
 function! s:isInitialized() dict
