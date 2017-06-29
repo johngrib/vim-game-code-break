@@ -1,7 +1,3 @@
-let s:move = {
-            \ 'left' : { 'x' : -1, 'y' : -1 },
-            \ 'right': { 'x' : 1 , 'y' : -1 },
-            \ }
 let s:config = {}
 let s:screen = {}
 let s:bounce = {}
@@ -31,14 +27,14 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
 
 endfunction
 
-function! s:create(x, y, dir)
+function! s:create(x, y, dir) dict
     let l:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let l:ball['x'] = a:x
     let l:ball['y'] = a:y
     let l:ball['active'] = 1
 
-    if has_key(s:move, a:dir)
-        let l:ball.direction = s:move[a:dir]
+    if has_key(self.move, a:dir)
+        let l:ball.direction = self.move[a:dir]
     endif
 
     return l:ball
