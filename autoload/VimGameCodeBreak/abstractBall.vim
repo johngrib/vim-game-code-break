@@ -2,7 +2,6 @@ let s:move = {
             \ 'left' : { 'x' : -1, 'y' : -1 },
             \ 'right': { 'x' : 1 , 'y' : -1 },
             \ }
-let s:common = {}
 let s:config = {}
 let s:screen = {}
 let s:bounce = {}
@@ -11,7 +10,6 @@ let s:ship = {}
 
 function! VimGameCodeBreak#abstractBall#new(screen, bounce, life, ship, config)
 
-    let s:common = VimGameCodeBreak#common#new()
     let s:screen = a:screen
     let s:bounce = a:bounce
     let s:life = a:life
@@ -29,6 +27,7 @@ function! VimGameCodeBreak#abstractBall#new(screen, bounce, life, ship, config)
                 \'active': 0
                 \}
 
+    let obj.common = VimGameCodeBreak#common#new()
     let obj.create = funcref('<SID>create')
     let obj.tick = funcref('<SID>tick')
     let obj.isReady = funcref('<SID>isReady')
@@ -46,14 +45,6 @@ function! VimGameCodeBreak#abstractBall#new(screen, bounce, life, ship, config)
     let obj.pongX = funcref('<SID>pongX')
     let obj.pongY = funcref('<SID>pongY')
     let obj.doNothing = funcref('<SID>doNothing')
-
-    let obj.hitWallEvent = funcref('<SID>hitWallEvent')
-    let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
-    let obj.hitCharXEvent = funcref('<SID>hitCharXEvent')
-    let obj.hitBottomWallEvent = funcref('<SID>hitBottomWallEvent')
-    let obj.hitShipEvent = funcref('<SID>hitShipEvent')
-    let obj.hitFloorEvent = funcref('<SID>hitFloorEvent')
-    let obj.hitTopEvent = funcref('<SID>hitTopEvent')
 
     return obj
 endfunction
@@ -104,14 +95,14 @@ function! s:roll() dict
 endfunction
 
 function! s:hide() dict
-    call s:common.drawChar(self.x, self.y, ' ')
+    call self.common.drawChar(self.x, self.y, ' ')
 endfunction
 
 function! s:show() dict
     if ! self.active
         return
     endif
-    call s:common.drawChar(self.x, self.y, 'O')
+    call self.common.drawChar(self.x, self.y, 'O')
 endfunction
 
 function! s:reverseX() dict
@@ -175,26 +166,6 @@ function! s:pongX() dict
     return self.doNothing()
 endfunction
 
-function! s:hitLimitEvent() dict
-    call self.reverseY()
-endfunction
-
-function! s:hitTopEvent() dict
-    call s:screen.removeEmptyLines()
-    call s:screen.scrollToLast()
-    call self.reverseY()
-endfunction
-
-function! s:hitShipEvent() dict
-    call self.reverseY()
-endfunction
-
-function! s:hitFloorEvent() dict
-    call s:life.decrease()
-    call self.kill()
-    call self.reverseY()
-endfunction
-
 " ball 의 Y axis 충돌 처리를 한다
 function! s:pongY() dict
 
@@ -213,26 +184,3 @@ function! s:pongY() dict
     return self.doNothing()
 endfunction
 
-function! s:hitWallEvent() dict
-    call s:screen.lineJoin(self.y - 1)
-    call s:screen.scrollToLast()
-    call self.reverseX()
-endfunction
-
-function! s:hitBottomWallEvent() dict
-    call self.reverseX()
-endfunction
-
-function! s:hitCharYEvent() dict
-    call s:common.removeWord(self.futureX(), self.y)
-    call s:screen.scrollToLast()
-    call self.reverseX()
-endfunction
-
-function! s:hitCharXEvent() dict
-    if self.futureY() < line('$')
-        call s:common.removeWord(self.x, self.futureY())
-        call s:screen.scrollToLast()
-    endif
-    call self.reverseY()
-endfunction
