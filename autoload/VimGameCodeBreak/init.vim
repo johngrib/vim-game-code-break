@@ -28,11 +28,11 @@ function! VimGameCodeBreak#init#createBuffer(config)
 
     execute "colorscheme " . l:colors_name
 
-    call s:setLocalSetting()
+    call s:setLocalSetting(a:config)
 
 endfunction
 
-function! s:setLocalSetting()
+function! s:setLocalSetting(config)
     " echo synIDattr(synIDtrans(hlID('StatusLine')), 'fg')
     setlocal bufhidden=wipe
     setlocal buftype=nofile
@@ -49,7 +49,10 @@ function! s:setLocalSetting()
     setlocal laststatus=2
     setlocal fileencodings=utf-8
     setlocal signcolumn=no
+    setlocal regexpengine=1
+    setlocal lazyredraw
     syntax on
+    execute "setlocal synmaxcol=" . (a:config['width'] - 1)
     highlight statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
 
     " 게임 시작시에 커서를 숨기고, 게임이 끝나면 커서를 복구한다

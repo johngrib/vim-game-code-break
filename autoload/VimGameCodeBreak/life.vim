@@ -1,37 +1,39 @@
 let s:life = 5
 let s:game_over = 0
 
-function! VimGameCodeBreak#life#new()
+function! VimGameCodeBreak#life#new(life)
 
+    let s:life = a:life
     let l:obj = {}
-    let l:obj['set'] = funcref('<SID>set')
-    let l:obj['get'] = funcref('<SID>get')
-    let l:obj['decrease'] = funcref('<SID>decrease')
-    let l:obj['increase'] = funcref('<SID>increase')
-    let l:obj['isGameOver'] = funcref('<SID>isGameOver')
+    let l:prefix = 'VimGameCodeBreak#life#'
+    let l:obj['set'] = funcref(l:prefix . 'set')
+    let l:obj['get'] = funcref(l:prefix . 'get')
+    let l:obj['decrease'] = funcref(l:prefix . 'decrease')
+    let l:obj['increase'] = funcref(l:prefix . 'increase')
+    let l:obj['isGameOver'] = funcref(l:prefix . 'isGameOver')
 
     return l:obj
 endfunction
 
-function! s:set(life)
+function! VimGameCodeBreak#life#set(life)
     let s:life = a:life
     return s:life
 endfunction
 
-function! s:get()
+function! VimGameCodeBreak#life#get()
     return s:life
 endfunction
 
-function! s:decrease()
+function! VimGameCodeBreak#life#decrease()
     let s:life = s:life - 1
     return s:life
 endfunction
 
-function! s:increase()
+function! VimGameCodeBreak#life#increase()
     let s:life = s:life + 1
     return s:life
 endfunction
 
-function! s:isGameOver()
+function! VimGameCodeBreak#life#isGameOver()
     return (s:life <= s:game_over)
 endfunction

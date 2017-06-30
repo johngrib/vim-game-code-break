@@ -17,20 +17,27 @@ let s:common = {}
 let s:interval = 5
 let s:keyProc = {}
 let s:godMode = 0
+let s:screen = {}
+let s:item = []
 
 function! VimGameCodeBreak#game#main()
 
     let s:common = VimGameCodeBreak#common#new()
     let s:config = s:init()
+
     let s:screen = VimGameCodeBreak#screen#new(s:config)
-    let s:life = VimGameCodeBreak#life#new()
-    let s:ball = VimGameCodeBreak#ball#new()
-    let s:keyProc = s:initKeys()
     let s:bounce = VimGameCodeBreak#bounce#new(s:config)
 
-    call s:life.set(5)
+    let s:life = VimGameCodeBreak#life#new(5)
+    let s:ship = VimGameCodeBreak#ship#new(s:config)
+    let s:ball = VimGameCodeBreak#abstractBall#new(s:screen, s:bounce, s:life, s:ship, s:config)
 
-    call s:removeEmptyLines()
+    let s:life_item = VimGameCodeBreak#item_life#new(s:screen, s:bounce, s:life, s:ship, s:config)
+
+    let s:keyProc = s:initKeys()
+
+    call s:ship.show()
+    call s:screen.removeEmptyLines()
     call s:screen.scrollToLast()
 
     let s:loop = 1
@@ -38,21 +45,37 @@ function! VimGameCodeBreak#game#main()
         let l:input = nr2char(getchar(0))
 
         call s:userInputProc(l:input)
-
         call s:updateItems(s:interval)
-
         call s:common.sleep(s:interval)
 
         redraw
 
         if s:life.isGameOver()
             echo 'GAME OVER'
-            let s:loop = -1
-        else
-            echo "LIFE : " . s:life.get() . "    " . (s:godMode ? "GOD MODE" : "")
+            break
         endif
+
+        call s:showStatus()
+
     endwhile
 
+endfunction
+
+function! VimGameCodeBreak#game#createLifeItem(x, y, dir)
+    let l:item = s:life_item.create(a:x, a:y, a:dir)
+    call VimGameCodeBreak#game#addItem(l:item)
+endfunction
+
+function! VimGameCodeBreak#game#addItem(item)
+    let s:item += [a:item]
+endfunction
+
+function! VimGameCodeBreak#game#getItemList()
+    return s:item
+endfunction
+
+function! s:showStatus()
+    echo "LIFE : " . s:life.get() . "    " . (s:godMode ? "GOD MODE" : "")
 endfunction
 
 function! s:initKeys()
@@ -85,7 +108,10 @@ function! s:createNewBall()
     endif
     let l:y = line('$') - 1
     let l:x = s:ship.getCenter()
+    let s:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let s:ball = s:ball.create(l:x, l:y, s:ship.getDirection())
+
+    call VimGameCodeBreak#game#addItem(s:ball)
 
 endfunction
 
@@ -96,98 +122,25 @@ endfunction
 
 function! s:moveBall(time)
 
-    if ! s:ball.isReady(a:time)
-        return
-    endif
+    for l:item in s:item
+        call l:item.tick(a:time)
+        call l:item.hide()
+    endfor
 
-    call s:ball.hide()
+    for l:item in s:item
+        if l:item.isReady()
+            call l:item.update()
+            call l:item.roll()
+        endif
+    endfor
 
-    let l:x = s:ball['x']
-    let l:y = s:ball['y']
-
-    if s:pongX(l:x, l:y)
-        call s:ball.reverseY()
-    endif
-
-    if s:pongY(l:x, l:y)
-        call s:ball.reverseX()
-    endif
-
-    call s:ball.roll()
-    call s:ball.show()
+    for l:item in s:item
+        call l:item.show()
+        call l:item.tock()
+    endfor
 
 endfunction
 
-" ball 의 X axis 충돌 처리를 한다
-function! s:pongX(x, y)
-
-    let l:last = line('$')
-    let l:xx = s:ball.futureX()
-    let l:yy = s:ball.futureY()
-
-    if s:bounce.onFloor(s:ball)
-        if s:ship.isCatchFailed(a:x) && !s:godMode
-            " 바닥에 닿은 경우
-            call s:life.decrease()
-            call s:ball.kill()
-            return 1
-        endif
-        return 1
-    endif
-
-    if s:bounce.onTop(s:ball)
-        " 천장에 닿은 경우
-        call s:removeEmptyLines()
-        call s:screen.scrollToLast()
-        return 1
-    endif
-
-    if s:bounce.onCharX(s:ball)
-        " 글자에 닿은 경우
-        if l:yy < line('$')
-            call s:common.removeWord(a:x, l:yy)
-            call s:screen.scrollToLast()
-        endif
-        return 1
-    endif
-
-    if s:bounce.onLimit(s:ball)
-        return 1
-    endif
-
-    return 0
-endfunction
-
-" ball 의 Y axis 충돌 처리를 한다
-function! s:pongY(x, y)
-
-    let l:last = s:config['width']
-    let l:xx = s:ball.futureX()
-    let l:yy = s:ball.futureY()
-
-    if s:bounce.onWall(s:ball)
-        if s:bounce.inHeight(s:ball)
-            let l:row = substitute(getline(a:y - 1), '\s*$', ' ', '')
-            call setline(a:y - 1, l:row)
-            execute "" . (a:y - 1) . "j"
-            let l:botrow = substitute(getline(a:y - 1), '$', s:config['empty_line'], '')
-            call setline(a:y - 1, l:botrow)
-            call s:screen.scrollToLast()
-        endif
-        return 1
-    endif
-
-    if s:bounce.onCharY(s:ball)
-        call s:common.removeWord(l:xx, a:y)
-        call s:screen.scrollToLast()
-        return 1
-    endif
-
-    " if a:x >= l:last
-    "     return 1
-    " endif
-    return 0
-endfunction
 
 " game initialize
 function! s:init()
@@ -200,18 +153,7 @@ function! s:init()
 
     let l:config['top'] = line("'a") + 1
 
-    let s:ship = VimGameCodeBreak#ship#new(l:config)
-
-    call s:ship.show()
-
     return l:config
-endfunction
-
-function! s:removeEmptyLines()
-    call s:screen.scrollToLast()
-    if line('$') > s:config['height']
-        execute "silent! " . line('w0') . "," . (line('w$') - 5) . "g/^\\s*$/d"
-    endif
 endfunction
 
 function! s:quit()

@@ -35,7 +35,7 @@ function! s:removeWord(x, y)
     endif
 
     let l:word = expand('<cWORD>')
-    execute "normal! vaWr "
+    execute "normal! vaWgr "
     return l:word
 endfunction
 
