@@ -12,20 +12,22 @@ function! VimGameCodeBreak#item_life#new(screen, bounce, life, ship, config)
     let s:ship = a:ship
     let s:config = a:config
 
-    let obj = VimGameCodeBreak#abstractBall#new(a:screen, a:bounce, a:life, a:ship, a:config)
+    let l:obj = VimGameCodeBreak#abstractBall#new(a:screen, a:bounce, a:life, a:ship, a:config)
+    let l:obj = deepcopy(obj)
 
-    let obj.icon = 'L'
-    let obj.interval = 10
-    let obj.create = funcref('<SID>create')
-    let obj.hitWallEvent = funcref('<SID>hitWallEvent')
-    let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
-    let obj.hitCharXEvent = funcref('<SID>hitCharXEvent')
-    let obj.hitBottomWallEvent = funcref('<SID>hitBottomWallEvent')
-    let obj.hitShipEvent = funcref('<SID>hitShipEvent')
-    let obj.hitFloorEvent = funcref('<SID>hitFloorEvent')
-    let obj.hitTopEvent = funcref('<SID>hitTopEvent')
+    let l:obj.icon = 'L'
+    let l:obj.interval = 40
+    let l:obj.hitCount = 10
+    let l:obj.create = funcref('<SID>create')
+    let l:obj.hitWallEvent = funcref('<SID>hitWallEvent')
+    let l:obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
+    let l:obj.hitCharXEvent = funcref('<SID>hitCharXEvent')
+    let l:obj.hitBottomWallEvent = funcref('<SID>hitBottomWallEvent')
+    let l:obj.hitShipEvent = funcref('<SID>hitShipEvent')
+    let l:obj.hitFloorEvent = funcref('<SID>hitFloorEvent')
+    let l:obj.hitTopEvent = funcref('<SID>hitTopEvent')
 
-    return obj
+    return l:obj
 
 endfunction
 
@@ -36,34 +38,23 @@ function! s:create(x, y, dir) dict
     let l:item['active'] = 1
 
     if has_key(self.move, a:dir)
-        let l:item.direction = self.move[a:dir]
+        let l:item.direction = { 'x': 0, 'y': 1 }
     endif
 
     return l:item
 endfunction
 
 function! s:hitWallEvent() dict
-    call s:screen.lineJoin(self.y - 1)
-    call s:screen.scrollToLast()
-    call self.reverseX()
 endfunction
 
 function! s:hitCharYEvent() dict
-    call self.common.removeWord(self.futureX(), self.y)
-    call s:screen.scrollToLast()
-    call self.reverseX()
 endfunction
 
 function! s:hitCharXEvent() dict
-    if self.futureY() < line('$')
-        call self.common.removeWord(self.x, self.futureY())
-        call s:screen.scrollToLast()
-    endif
-    call self.reverseY()
+    call self.kill()
 endfunction
 
 function! s:hitBottomWallEvent() dict
-    call self.reverseX()
 endfunction
 
 function! s:hitShipEvent() dict
