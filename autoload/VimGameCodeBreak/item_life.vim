@@ -15,7 +15,7 @@ function! VimGameCodeBreak#item_life#new(screen, bounce, life, ship, config)
     let l:obj = VimGameCodeBreak#abstractBall#new(a:screen, a:bounce, a:life, a:ship, a:config)
     let l:obj = deepcopy(obj)
 
-    let l:obj.icon = 'L'
+    let l:obj.icon = '+'
     let l:obj.interval = 40
     let l:obj.hitCount = 10
     let l:obj.create = funcref('<SID>create')
