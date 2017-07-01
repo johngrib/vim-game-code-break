@@ -38,7 +38,6 @@ function! VimGameCodeBreak#game#main()
     let s:keyProc = s:initKeys()
 
     call s:ship.show()
-    call s:screen.removeEmptyLines()
     call s:screen.scrollToLast()
 
     let s:loop = 1
@@ -159,7 +158,7 @@ function! s:init()
     call VimGameCodeBreak#init#createBuffer(l:config)
     call VimGameCodeBreak#init#drawScreen(l:config)
 
-    let l:config['top'] = line("'a") + 1
+    let l:config['top'] = line("'a") - 1
 
     return l:config
 endfunction

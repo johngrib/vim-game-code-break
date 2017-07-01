@@ -22,7 +22,7 @@ endfunction
 function! VimGameCodeBreak#screen#removeEmptyLines() dict
     call self.scrollToLast()
     if line('$') > s:height
-        execute "silent! " . line('w0') . "," . (line('w$') - 5) . "g/^\\s*$/d"
+        execute "silent! " . line('w0') . "," . (line('w$') - 10) . "g/^\\s*$/d"
     endif
 endfunction
 

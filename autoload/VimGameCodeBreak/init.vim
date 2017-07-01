@@ -64,30 +64,24 @@ function! s:setLocalSetting(config)
 endfunction
 
 function! VimGameCodeBreak#init#drawScreen(config)
-    call s:removeEmptyLines()
-    execute "normal! G0mb"
-    execute "normal! o"
 
-    let l:width = a:config['width']
-    let l:last_line = line('$')
+    silent! g/^\s*$/delete
+    call setpos("'a", [0, 1, 0])
 
-    let l:bottom_lines = repeat([repeat(' ', l:width)], 5)
-    call setline(l:last_line, l:bottom_lines)
+    let l:bottom_lines = repeat([repeat(' ', a:config['width'])], 10)
+    call append(line('$'), l:bottom_lines)
 
     call s:appendChars(a:config['empty_line'])
 
-    execute "normal! ggO"
-    execute "normal! gg0ma"
-    execute "normal! " . a:config['height'] . "."
+    call append(0, repeat([''], a:config['height']))
 
+    call setpos("'b", [0, line('$') - a:config['height'] * 2, 0])
+    let l:fullText = getline(1, line('$'))
+
+    return l:fullText
 endfunction
 
 function! s:appendChars(chars)
     silent! %s/$/\=a:chars/
 endfunction
-
-function! s:removeEmptyLines()
-    silent! g/^\s*$/d
-endfunction
-
 
