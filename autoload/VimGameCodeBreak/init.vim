@@ -76,7 +76,9 @@ function! VimGameCodeBreak#init#drawScreen(config)
     call append(0, repeat([''], a:config['height']))
 
     call setpos("'b", [0, line('$') - a:config['height'] * 2, 0])
+
     let l:fullText = getline(1, line('$'))
+    execute "silent! 1,'b-1s/./ /g"
 
     return l:fullText
 endfunction

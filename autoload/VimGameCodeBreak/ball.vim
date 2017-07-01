@@ -42,7 +42,13 @@ function! s:create(x, y, dir) dict
 endfunction
 
 function! s:hitWallEvent() dict
+
+    let l:before = line('$')
     call s:screen.lineJoin(self.y - 1)
+    let l:after = line('$')
+
+    call self.common.prepareLine(l:before - l:after, s:config['fullText'])
+
     call s:screen.scrollToLast()
     call self.reverseX()
 endfunction
@@ -81,7 +87,10 @@ function! s:hitFloorEvent() dict
 endfunction
 
 function! s:hitTopEvent() dict
+    let l:before = line('$')
     call s:screen.removeEmptyLines()
+    let l:after = line('$')
+    call self.common.prepareLine(l:before - l:after, s:config['fullText'])
     call s:screen.scrollToLast()
     call self.reverseY()
 endfunction
