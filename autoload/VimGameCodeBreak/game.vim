@@ -2,6 +2,7 @@ let s:config = {}
 let s:ship = {}
 let s:ball_proto = { 'x': 0, 'y': 0, 'active': 0 }
 let s:life = {}
+let s:fullText = []
 
 let s:move = {
             \ 'left-up'    : { 'x' : -1, 'y' : -1 },
@@ -38,7 +39,6 @@ function! VimGameCodeBreak#game#main()
     let s:keyProc = s:initKeys()
 
     call s:ship.show()
-    call s:screen.removeEmptyLines()
     call s:screen.scrollToLast()
 
     let s:loop = 1
@@ -157,9 +157,10 @@ function! s:init()
 
     let l:config = VimGameCodeBreak#init#getInitConfig()
     call VimGameCodeBreak#init#createBuffer(l:config)
-    call VimGameCodeBreak#init#drawScreen(l:config)
+    let l:fullText = VimGameCodeBreak#init#drawScreen(l:config)
 
-    let l:config['top'] = line("'a") + 1
+    let l:config['top'] = line("'a") - 1
+    let l:config['fullText'] = l:fullText
 
     return l:config
 endfunction

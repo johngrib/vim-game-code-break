@@ -7,6 +7,7 @@ function! VimGameCodeBreak#common#new()
     let obj.getCharValue = funcref('<SID>getCharValue')
     let obj.removeWord = funcref('<SID>removeWord')
     let obj.sleep = funcref('<SID>sleep')
+    let obj.prepareLine = funcref('<SID>prepareLine')
 
     return obj
 endfunction
@@ -39,7 +40,22 @@ function! s:removeWord(x, y)
     return l:word
 endfunction
 
-function s:sleep(time)
+function! s:sleep(time)
     execute "sleep " . a:time . "ms"
 endfunction
 
+function! s:prepareLine(count, fullText)
+
+    let l:line = line("'b") - a:count
+    if l:line <= 0
+        return
+    endif
+
+    let l:start = l:line - 1
+    let l:end = l:start + a:count
+
+    call setline(l:line, a:fullText[(l:start):(l:end)])
+
+    call setpos("'b", [0, l:line, 0])
+
+endfunction

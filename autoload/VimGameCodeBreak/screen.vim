@@ -22,15 +22,13 @@ endfunction
 function! VimGameCodeBreak#screen#removeEmptyLines() dict
     call self.scrollToLast()
     if line('$') > s:height
-        execute "silent! " . line('w0') . "," . (line('w$') - 5) . "g/^\\s*$/d"
+        execute "silent! " . line('w0') . "," . (line('w$') - 10) . "g/^\\s*$/d"
     endif
 endfunction
 
 function! VimGameCodeBreak#screen#lineJoin(line) dict
     let l:row = substitute(getline(a:line), '\s*$', ' ', '')
     let l:botrow = substitute(getline(a:line + 1), '$', s:config['empty_line'], '')
-    call setline(a:line, l:row)
-    call setline(a:line + 1, l:botrow)
-    call cursor(a:line, 0)
-    execute "normal! J"
+    call setline(a:line, l:row . l:botrow)
+    execute ((a:line + 1) . "delete")
 endfunction
