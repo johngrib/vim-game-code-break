@@ -19,6 +19,7 @@ let s:keyProc = {}
 let s:godMode = 0
 let s:screen = {}
 let s:item = []
+let s:itemTemp = []
 
 function! VimGameCodeBreak#game#main()
 
@@ -67,7 +68,7 @@ function! VimGameCodeBreak#game#createLifeItem(x, y, dir)
 endfunction
 
 function! VimGameCodeBreak#game#addItem(item)
-    let s:item += [a:item]
+    let s:itemTemp += [a:item]
 endfunction
 
 function! VimGameCodeBreak#game#getItemList()
@@ -116,6 +117,13 @@ function! s:createNewBall()
 endfunction
 
 function! s:updateItems(time)
+
+    if len(s:itemTemp) > 0
+        call filter(s:item, {ids, val -> val.active })
+        let s:item += s:itemTemp
+        let s:itemTemp = []
+    endif
+
     call s:ship.move(a:time)
     call s:moveBall(a:time)
 endfunction
