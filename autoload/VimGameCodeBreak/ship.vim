@@ -26,7 +26,7 @@ function! VimGameCodeBreak#ship#new(config)
     let s:ship['isCatchSuccess'] = funcref('<SID>isCatchSuccess')
     let s:ship['getDirection'] = funcref('<SID>getDirection')
 
-    let s:ship['interval']   = 30
+    let s:ship['interval']   = 50
     let s:ship['time_check'] = 0
     let s:ship['increase'] = funcref('VimGameCodeBreak#ship#increase')
     let s:ship['decrease'] = funcref('VimGameCodeBreak#ship#decrease')

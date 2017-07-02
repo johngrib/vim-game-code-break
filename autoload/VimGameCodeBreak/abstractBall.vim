@@ -25,7 +25,7 @@ function! VimGameCodeBreak#abstractBall#new(screen, bounce, life, ship, config)
                 \'old_x': -1,
                 \'old_y': -1,
                 \'direction': l:move['left'],
-                \'interval': 40,
+                \'interval': 50,
                 \'time_check': 0,
                 \'active': 0,
                 \'icon': 'O'

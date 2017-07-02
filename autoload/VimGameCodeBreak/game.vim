@@ -15,7 +15,7 @@ let s:move = {
 
 let s:ball = {}
 let s:common = {}
-let s:interval = 40
+let s:interval = 50
 let s:keyProc = {}
 let s:godMode = 0
 let s:screen = {}
