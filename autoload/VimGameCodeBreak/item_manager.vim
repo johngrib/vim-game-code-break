@@ -19,11 +19,13 @@ function! VimGameCodeBreak#item_manager#new(screen, bounce, life, ship, config)
     let l:life_item = VimGameCodeBreak#item_life#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let l:ship_item = VimGameCodeBreak#item_large_ship#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let l:ball_item = VimGameCodeBreak#item_add_ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
+    let l:bomb_item = VimGameCodeBreak#item_bomb#new(s:screen, s:bounce, s:life, s:ship, s:config)
 
     let l:obj.item = []
     call add(l:obj.item, l:life_item)
     call add(l:obj.item, l:ship_item)
     call add(l:obj.item, l:ball_item)
+    call add(l:obj.item, l:bomb_item)
 
     return l:obj
 
