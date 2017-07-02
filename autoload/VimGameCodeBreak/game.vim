@@ -105,9 +105,11 @@ function! s:userInputProc(input)
 endfunction
 
 function! s:createNewBall()
-    if s:ball.active
-        return
-    endif
+    for l:item in s:item
+        if l:item.active
+            return
+        endif
+    endfor
     let l:y = line('$') - 1
     let l:x = s:ship.getCenter()
     let s:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
