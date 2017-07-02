@@ -58,7 +58,7 @@ function! s:hitShipEvent() dict
     let l:x = s:ship.getCenter()
     let s:ball = VimGameCodeBreak#ball#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let s:ball = s:ball.create(l:x, l:y, s:ship.getDirection())
-
+    call s:life.increase()
     call VimGameCodeBreak#game#addItem(s:ball)
     call self.kill()
 endfunction
