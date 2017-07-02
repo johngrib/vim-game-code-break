@@ -33,8 +33,7 @@ function! s:drawChar(x, y, char)
     endif
     call cursor(a:y, 0)
     execute "normal! " . a:x . "|"
-    execute "normal! x"
-    execute "normal! i" . a:char
+    execute "normal! gr" . a:char
     normal! 0
 endfunction
 
