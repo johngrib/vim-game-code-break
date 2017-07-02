@@ -15,6 +15,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
     let obj = VimGameCodeBreak#abstractBall#new(a:screen, a:bounce, a:life, a:ship, a:config)
 
     let obj.icon = 'O'
+    let obj.itemRate = 100
     let obj.create = funcref('<SID>create')
     let obj.hitWallEvent = funcref('<SID>hitWallEvent')
     let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
@@ -65,8 +66,8 @@ function! s:hitCharXEvent() dict
     if self.futureY() < line('$')
         let l:word = self.common.removeWord(self.x, self.futureY())
 
-        if self.common.rand(100) < strlen(l:word)
-            call VimGameCodeBreak#game#createLifeItem(self.x, self.y, 'right-down')
+        if self.common.rand(self.itemRate) < strlen(l:word)
+            call VimGameCodeBreak#game#createNewItem(self.x, self.y, 'right-down')
         endif
 
         call s:screen.scrollToLast()

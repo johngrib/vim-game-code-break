@@ -4,7 +4,7 @@ let s:bounce = {}
 let s:life = {}
 let s:ship = {}
 
-function! VimGameCodeBreak#item_life#new(screen, bounce, life, ship, config)
+function! VimGameCodeBreak#item_large_ship#new(screen, bounce, life, ship, config)
 
     let s:screen = a:screen
     let s:bounce = a:bounce
@@ -15,8 +15,8 @@ function! VimGameCodeBreak#item_life#new(screen, bounce, life, ship, config)
     let l:obj = VimGameCodeBreak#abstractBall#new(a:screen, a:bounce, a:life, a:ship, a:config)
     let l:obj = deepcopy(obj)
 
-    let l:obj.icon = 'L'
-    let l:obj.interval = 80
+    let l:obj.icon = 'X'
+    let l:obj.interval = 40
     let l:obj.hitCount = 10
     let l:obj.create = funcref('<SID>create')
     let l:obj.hitWallEvent = funcref('<SID>hitWallEvent')
@@ -32,7 +32,7 @@ function! VimGameCodeBreak#item_life#new(screen, bounce, life, ship, config)
 endfunction
 
 function! s:create(x, y, dir) dict
-    let l:item = VimGameCodeBreak#item_life#new(s:screen, s:bounce, s:life, s:ship, s:config)
+    let l:item = VimGameCodeBreak#item_large_ship#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let l:item['x'] = a:x
     let l:item['y'] = a:y
     let l:item['active'] = 1
@@ -55,7 +55,7 @@ function! s:hitBottomWallEvent() dict
 endfunction
 
 function! s:hitShipEvent() dict
-    call s:life.increase()
+    call s:ship.increase()
     call self.kill()
 endfunction
 

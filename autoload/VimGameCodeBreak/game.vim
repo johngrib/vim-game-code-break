@@ -15,7 +15,7 @@ let s:move = {
 
 let s:ball = {}
 let s:common = {}
-let s:interval = 5
+let s:interval = 40
 let s:keyProc = {}
 let s:godMode = 0
 let s:screen = {}
@@ -34,6 +34,7 @@ function! VimGameCodeBreak#game#main()
     let s:ship = VimGameCodeBreak#ship#new(s:config)
     let s:ball = VimGameCodeBreak#abstractBall#new(s:screen, s:bounce, s:life, s:ship, s:config)
 
+    let s:itemMan = VimGameCodeBreak#item_manager#new(s:screen, s:bounce, s:life, s:ship, s:config)
     let s:life_item = VimGameCodeBreak#item_life#new(s:screen, s:bounce, s:life, s:ship, s:config)
 
     let s:keyProc = s:initKeys()
@@ -62,8 +63,8 @@ function! VimGameCodeBreak#game#main()
 
 endfunction
 
-function! VimGameCodeBreak#game#createLifeItem(x, y, dir)
-    let l:item = s:life_item.create(a:x, a:y, a:dir)
+function! VimGameCodeBreak#game#createNewItem(x, y, dir)
+    let l:item = s:itemMan.getRandomItem(a:x, a:y, a:dir)
     call VimGameCodeBreak#game#addItem(l:item)
 endfunction
 

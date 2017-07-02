@@ -2,12 +2,13 @@ let s:ship = {}
 let s:config = {}
 let s:body = ''
 let s:left = ''
+let s:size = 17
 
 function! VimGameCodeBreak#ship#new(config)
 
     let s:config = a:config
-    let l:size   = 17
-    let s:body   = repeat('X', l:size)
+    let s:size   = 17
+    let s:body   = repeat('X', s:size)
     let s:left   = ''
 
     let s:ship = {}
@@ -27,12 +28,29 @@ function! VimGameCodeBreak#ship#new(config)
 
     let s:ship['interval']   = 30
     let s:ship['time_check'] = 0
+    let s:ship['increase'] = funcref('VimGameCodeBreak#ship#increase')
+    let s:ship['decrease_time_interval'] = 10000
+    let s:ship['decrease_time_check'] = 10000
 
     return s:ship
 endfunction
 
 function! VimGameCodeBreak#ship#get()
     return s:left . s:body
+endfunction
+
+function! VimGameCodeBreak#ship#increase()
+    if len(s:body) > 30
+        return
+    endif
+    let s:body = s:body . 'XXX'
+endfunction
+
+function! VimGameCodeBreak#ship#decrease()
+    if len(s:body) <= s:size
+        return
+    endif
+    let s:body = s:body[1:]
 endfunction
 
 function! s:show()
