@@ -28,6 +28,9 @@ function! VimGameCodeBreak#ship#new(config)
 
     let s:ship['interval']   = 30
     let s:ship['time_check'] = 0
+    let s:ship['increase'] = funcref('VimGameCodeBreak#ship#increase')
+    let s:ship['decrease_time_interval'] = 10000
+    let s:ship['decrease_time_check'] = 10000
 
     return s:ship
 endfunction
@@ -37,8 +40,18 @@ function! VimGameCodeBreak#ship#get()
 endfunction
 
 function! VimGameCodeBreak#ship#increase()
-    let s:body = s:body . 'XX'
-endfunction!
+    if len(s:body) > 30
+        return
+    endif
+    let s:body = s:body . 'XXX'
+endfunction
+
+function! VimGameCodeBreak#ship#decrease()
+    if len(s:body) <= s:size
+        return
+    endif
+    let s:body = s:body[1:]
+endfunction
 
 function! s:show()
     setlocal statusline=%!VimGameCodeBreak#ship#get()
