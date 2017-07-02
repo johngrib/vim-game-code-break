@@ -159,13 +159,13 @@ function! s:pongX() dict
         return self.hitTopEvent()
     endif
 
+    if s:bounce.onLimit(self)
+        return self.hitLimitEvent()
+    endif
+
     if s:bounce.onCharX(self)
         " 글자에 닿은 경우
         return self.hitCharXEvent()
-    endif
-
-    if s:bounce.onLimit(self)
-        return self.hitLimitEvent()
     endif
 
     return self.doNothing()

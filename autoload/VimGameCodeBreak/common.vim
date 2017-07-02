@@ -59,6 +59,9 @@ function! s:removeWord(x, y)
     if a:y < 1 || a:y > line('$') || a:x > winwidth(0) - 1
         return
     endif
+    if len(getline(a:y)) < 1
+        return
+    endif
     call cursor(a:y, 0)
     execute "normal! " . a:x . "|"
 
