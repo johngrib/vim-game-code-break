@@ -23,6 +23,8 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
     let obj.hitShipEvent = funcref('<SID>hitShipEvent')
     let obj.hitFloorEvent = funcref('<SID>hitFloorEvent')
     let obj.hitTopEvent = funcref('<SID>hitTopEvent')
+    let obj.enableGod = funcref('<SID>enableGod')
+    let obj.disableGod = funcref('<SID>disableGod')
 
     return obj
 
@@ -99,3 +101,10 @@ function! s:hitLimitEvent() dict
     call self.reverseY()
 endfunction
 
+function! s:enableGod() dict
+    let self.hitFloorEvent = self.hitShipEvent
+endfunction
+
+function! s:disableGod() dict
+    let self.hitFloorEvent = funcref('<SID>hitFloorEvent')
+endfunction
