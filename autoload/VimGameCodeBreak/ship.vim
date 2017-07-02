@@ -2,12 +2,13 @@ let s:ship = {}
 let s:config = {}
 let s:body = ''
 let s:left = ''
+let s:size = 17
 
 function! VimGameCodeBreak#ship#new(config)
 
     let s:config = a:config
-    let l:size   = 17
-    let s:body   = repeat('X', l:size)
+    let s:size   = 17
+    let s:body   = repeat('X', s:size)
     let s:left   = ''
 
     let s:ship = {}
@@ -34,6 +35,10 @@ endfunction
 function! VimGameCodeBreak#ship#get()
     return s:left . s:body
 endfunction
+
+function! VimGameCodeBreak#ship#increase()
+    let s:body = s:body . 'XX'
+endfunction!
 
 function! s:show()
     setlocal statusline=%!VimGameCodeBreak#ship#get()
