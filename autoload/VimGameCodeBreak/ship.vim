@@ -29,6 +29,8 @@ function! VimGameCodeBreak#ship#new(config)
     let s:ship['interval']   = 30
     let s:ship['time_check'] = 0
     let s:ship['increase'] = funcref('VimGameCodeBreak#ship#increase')
+    let s:ship['decrease'] = funcref('VimGameCodeBreak#ship#decrease')
+    let s:ship['reset'] = funcref('VimGameCodeBreak#ship#reset')
     let s:ship['decrease_time_interval'] = 10000
     let s:ship['decrease_time_check'] = 10000
 
@@ -44,6 +46,10 @@ function! VimGameCodeBreak#ship#increase()
         return
     endif
     let s:body = s:body . 'XXX'
+endfunction
+
+function! VimGameCodeBreak#ship#reset()
+    let s:body = repeat('X', s:size)
 endfunction
 
 function! VimGameCodeBreak#ship#decrease()

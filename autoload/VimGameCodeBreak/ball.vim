@@ -86,6 +86,7 @@ endfunction
 function! s:hitFloorEvent() dict
     call s:life.decrease()
     call self.kill()
+    call s:ship.reset()
     call self.reverseY()
 endfunction
 
