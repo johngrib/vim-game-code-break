@@ -1,2 +1,2 @@
-![animated demonstration](https://user-images.githubusercontent.com/1855714/27086299-c5a41eac-508c-11e7-8cc4-9de52b354531.gif)
+![animated demonstration](https://user-images.githubusercontent.com/1855714/27774457-7e001646-5fcd-11e7-9e90-c37eafefad9c.gif)
 
