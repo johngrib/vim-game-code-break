@@ -120,7 +120,9 @@ function! s:updateItems(time)
 
     if len(s:itemTemp) > 0
         call filter(s:item, {ids, val -> val.active })
-        let s:item += s:itemTemp
+        if len(s:item) < 2
+            let s:item += s:itemTemp
+        endif
         let s:itemTemp = []
     endif
 
