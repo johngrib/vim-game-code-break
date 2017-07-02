@@ -171,8 +171,14 @@ endfunction
 
 function! s:enableGodMode()
     let s:godMode = 1
+    for l:item in s:item
+        call l:item.enableGod()
+    endfor
 endfunction
 
 function! s:disableGodMode()
     let s:godMode = 0
+    for l:item in s:item
+        call l:item.disableGod()
+    endfor
 endfunction

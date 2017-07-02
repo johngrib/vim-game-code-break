@@ -51,6 +51,8 @@ function! VimGameCodeBreak#abstractBall#new(screen, bounce, life, ship, config)
     let obj.pongX = funcref('<SID>pongX')
     let obj.pongY = funcref('<SID>pongY')
     let obj.doNothing = funcref('<SID>doNothing')
+    let obj.enableGod = funcref('<SID>enableGod')
+    let obj.disableGod = funcref('<SID>disableGod')
 
     return obj
 endfunction
@@ -189,3 +191,8 @@ function! s:pongY() dict
     return self.doNothing()
 endfunction
 
+function! s:enableGod() dict
+endfunction
+
+function! s:disableGod() dict
+endfunction
