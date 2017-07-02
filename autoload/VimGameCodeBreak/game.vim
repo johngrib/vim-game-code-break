@@ -76,6 +76,26 @@ function! VimGameCodeBreak#game#getItemList()
     return s:item
 endfunction
 
+function! VimGameCodeBreak#game#getBallCount()
+    let l:count = 0
+    for l:item in s:item
+        if l:item.icon == 'O' && l:item.active
+            let l:count += 1
+        endif
+    endfor
+    return l:count
+endfunction
+
+function! VimGameCodeBreak#game#getBallMaxY()
+    let l:y = -1
+    for l:item in s:item
+        if l:item.icon == 'O' && l:item.active && l:item.y > l:y
+            let l:y = l:item.y
+        endif
+    endfor
+    return l:y
+endfunction
+
 function! s:showStatus()
     echo "LIFE : " . s:life.get() . "    " . (s:godMode ? "GOD MODE" : "")
 endfunction

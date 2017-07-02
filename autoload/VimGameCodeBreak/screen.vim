@@ -9,6 +9,7 @@ function! VimGameCodeBreak#screen#new(config)
     let obj = {}
     let obj.scrollToLast = funcref('VimGameCodeBreak#screen#scrollToLast')
     let obj.removeEmptyLines = funcref('VimGameCodeBreak#screen#removeEmptyLines')
+    let obj.removeEmptyLinesLimit = funcref('VimGameCodeBreak#screen#removeEmptyLinesLimit')
     let obj.lineJoin = funcref('VimGameCodeBreak#screen#lineJoin')
 
     return obj
@@ -20,9 +21,16 @@ function! VimGameCodeBreak#screen#scrollToLast()
 endfunction
 
 function! VimGameCodeBreak#screen#removeEmptyLines() dict
-    call self.scrollToLast()
     if line('$') > s:height
         execute "silent! " . line('w0') . "," . (line('w$') - 10) . "g/^\\s*$/d"
+        call self.scrollToLast()
+    endif
+endfunction
+
+function! VimGameCodeBreak#screen#removeEmptyLinesLimit(max) dict
+    if line('$') > s:height && a:max <= (line('w$') - 10)
+        execute "silent! " . a:max . "," . (line('w$') - 10) . "g/^\\s*$/d"
+        call self.scrollToLast()
     endif
 endfunction
 

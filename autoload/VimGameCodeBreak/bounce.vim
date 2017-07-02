@@ -53,7 +53,8 @@ endfunction
 function! s:onBugLine(ball)
     let l:y = a:ball.futureY()
     let l:len = len(getline(l:y))
-    if line("'a") > l:y && l:len > 0 && l:len < s:config['width']
-        execute "" . l:y . "s/./ /g"
+    if l:y > line("'a") && l:y <= line('$') && l:len < s:config['width'] - 10
+        execute "" . l:y . "delete"
     endif
+    return 0
 endfunction

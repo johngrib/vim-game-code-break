@@ -15,7 +15,7 @@ function! VimGameCodeBreak#ball#new(screen, bounce, life, ship, config)
     let obj = VimGameCodeBreak#abstractBall#new(a:screen, a:bounce, a:life, a:ship, a:config)
 
     let obj.icon = 'O'
-    let obj.itemRate = 100
+    let obj.itemRate = 50
     let obj.create = funcref('<SID>create')
     let obj.hitWallEvent = funcref('<SID>hitWallEvent')
     let obj.hitCharYEvent = funcref('<SID>hitCharYEvent')
@@ -92,7 +92,7 @@ endfunction
 
 function! s:hitTopEvent() dict
     let l:before = line('$')
-    call s:screen.removeEmptyLines()
+    call s:screen.removeEmptyLinesLimit(VimGameCodeBreak#game#getBallMaxY())
     let l:after = line('$')
     call self.common.prepareLine(l:before - l:after, s:config['fullText'])
     call s:screen.scrollToLast()
