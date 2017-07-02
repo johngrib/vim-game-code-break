@@ -148,6 +148,8 @@ let s:pongXcheckList = []
 " ball 의 X axis 충돌 처리를 한다
 function! s:pongX() dict
 
+    call s:bounce.onBugLine(self)
+
     if s:bounce.onFloor(self) && s:ship.isCatchSuccess(self.x)
         return self.hitShipEvent()
     endif
