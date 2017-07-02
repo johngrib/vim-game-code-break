@@ -18,22 +18,49 @@ function! s:rand(max)
 endfunction
 
 function! s:drawChar(x, y, char)
+
     let l:row = getline(a:y)
-    let l:newRow = l:row[0:(a:x - 1)] . a:char . l:row[(a:x + 1):]
-    call setline(a:y, l:newRow)
+    let l:str = l:row[:(a:x - 1)]
+
+    if len(l:str) == strdisplaywidth(l:str)
+        let l:newRow = l:str . a:char . l:row[(a:x + 1):]
+        call setline(a:y, l:newRow)
+        return
+    endif
+
+    if a:y < 1 || a:y > line('$') || a:x > winwidth(0) - 1
+        return
+    endif
+    call cursor(a:y, 0)
+    execute "normal! " . a:x . "|"
+    execute "normal! lhx"
+    execute "normal! i" . a:char
+    normal! 0
 endfunction
 
 function! s:getCharValue(x, y)
-    return getline(a:y)[a:x]
+    let l:row = getline(a:y)
+    let l:str = l:row[:(a:x - 1)]
+    if len(l:str) == strdisplaywidth(l:str)
+        return l:row[a:x]
+    endif
+
+    if a:y < 1 || a:y > line('$') || a:x > winwidth(0) - 1
+        return
+    endif
+    call cursor(a:y, 0)
+    execute "normal! " . a:x . "|"
+    let l:char = matchstr(getline('.'), '\%' . col('.') . 'c.')
+    normal! 0
+    return l:char
 endfunction
 
 function! s:removeWord(x, y)
-    call cursor(a:y, a:x)
-    let l:pos = getcurpos()
-
-    if l:pos[2] != a:x
+    if a:y < 1 || a:y > line('$') || a:x > winwidth(0) - 1
         return
     endif
+    call cursor(a:y, 0)
+    execute "normal! " . a:x . "|"
 
     let l:word = expand('<cWORD>')
     execute "normal! vaWgr "
