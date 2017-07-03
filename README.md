@@ -7,7 +7,8 @@ version 0.1
 
 ## How to play
 
-`:VimGameCodeBreak` to Start
+1. open your code or text file in Vim
+1. `:VimGameCodeBreak` to Start
 
 h   | l   | space    | `         | ]        | [          | q
 --- | --- | ---      | ---       | ---      | ---        | ---
