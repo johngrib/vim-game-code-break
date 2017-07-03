@@ -2,7 +2,7 @@ function! VimGameCodeBreak#init#getInitConfig()
 
     let l:config = {}
 
-    let l:config['width']      = winwidth(0)
+    let l:config['width']      = 80
     let l:config['height']     = winheight(0)
     let l:config['empty_line'] = repeat(' ', l:config['width'] + 1)
 
@@ -19,6 +19,7 @@ function! VimGameCodeBreak#init#createBuffer(config)
     let l:textList = getbufline('%', 1, '$')
 
     silent edit `='VIM-GAME-CODE-BREAK-' . l:file_name`
+    vertical resize 80
 
     call setline(1, l:textList)
 
