@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 function! VimGameCodeBreak#common#new()
 
     let obj = {}

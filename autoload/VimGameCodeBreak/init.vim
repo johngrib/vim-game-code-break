@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 function! VimGameCodeBreak#init#getInitConfig()
 
     let l:config = {}

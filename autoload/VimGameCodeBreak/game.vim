@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 let s:config = {}
 let s:ship = {}
 let s:ball_proto = { 'x': 0, 'y': 0, 'active': 0 }
