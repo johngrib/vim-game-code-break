@@ -15,7 +15,9 @@ function! VimGameCodeBreak#init#createBuffer(config)
     vs
     let l:file_name   = expand('%:t')
     let l:file_ext    = l:file_name[(strridx(l:file_name, '.') + 1):]
-    let l:colors_name = g:colors_name
+    if has_key(g:, 'colors_name')
+        let l:colors_name = g:colors_name
+    endif
 
     let l:textList = getbufline('%', 1, '$')
 
@@ -28,7 +30,9 @@ function! VimGameCodeBreak#init#createBuffer(config)
 
     let l:textList = getbufline('%', 1, '$')
 
-    execute "colorscheme " . l:colors_name
+    if has_key(l:, 'colors_name')
+        execute "colorscheme " . l:colors_name
+    endif
 
     call s:setLocalSetting(a:config)
 
