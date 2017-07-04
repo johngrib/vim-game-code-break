@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 let s:life = 5
 let s:game_over = 0
 

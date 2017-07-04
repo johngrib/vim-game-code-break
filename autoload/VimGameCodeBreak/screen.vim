@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 let s:config = {}
 let s:height = 0
 
