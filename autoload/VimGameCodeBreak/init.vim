@@ -53,6 +53,7 @@ function! s:setLocalSetting(config)
     setlocal signcolumn=no
     setlocal regexpengine=1
     setlocal lazyredraw
+    setlocal nofoldenable
     syntax on
     " execute "setlocal synmaxcol=" . (a:config['width'] - 1)
     highlight statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
