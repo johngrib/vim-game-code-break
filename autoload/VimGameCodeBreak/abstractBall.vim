@@ -56,6 +56,16 @@ function! VimGameCodeBreak#abstractBall#new(screen, bounce, life, ship, config)
     let obj.enableGod = funcref('<SID>enableGod')
     let obj.disableGod = funcref('<SID>disableGod')
 
+    let obj.hitWallEvent = funcref('<SID>doNothing')
+    let obj.hitCharYEvent = funcref('<SID>doNothing')
+    let obj.hitCharXEvent = funcref('<SID>doNothing')
+    let obj.hitBottomWallEvent = funcref('<SID>doNothing')
+    let obj.hitShipEvent = funcref('<SID>doNothing')
+    let obj.hitFloorEvent = funcref('<SID>doNothing')
+    let obj.hitTopEvent = funcref('<SID>doNothing')
+    let obj.enableGod = funcref('<SID>doNothing')
+    let obj.disableGod = funcref('<SID>doNothing')
+
     return obj
 endfunction
 
