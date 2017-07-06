@@ -67,6 +67,10 @@ function! s:hitBottomWallEvent() dict
 endfunction
 
 function! s:hitShipEvent() dict
+    if self.hitCount < 1
+        call self.kill()
+    endif
+    let self.hitCount -= 1
     call self.reverseY()
 endfunction
 
