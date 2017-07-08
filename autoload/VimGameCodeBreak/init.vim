@@ -64,9 +64,11 @@ function! s:setLocalSetting(config)
     " execute "setlocal synmaxcol=" . (a:config['width'] - 1)
     highlight statusLine ctermfg=yellow ctermbg=NONE guifg=yellow guibg=NONE
 
-    " 게임 시작시에 커서를 숨기고, 게임이 끝나면 커서를 복구한다
-    execute "autocmd BufLeave * set t_ve=" . &t_ve
-    execute "autocmd VimLeave * set t_ve=" . &t_ve
+    " Hides/restores cursor at the start/end of the game
+    augroup vim_game_code_break
+        execute "autocmd BufLeave <buffer> set t_ve=" . &t_ve
+        execute "autocmd VimLeave <buffer> set t_ve=" . &t_ve
+    augroup END
     setlocal t_ve=
 
     retab
