@@ -63,6 +63,10 @@ function! VimGameCodeBreak#game#main()
 
     endwhile
 
+    if s:loop == -1
+        bdelete
+    endif
+
 endfunction
 
 function! VimGameCodeBreak#game#createNewItem(x, y, dir)
@@ -112,6 +116,11 @@ function! s:initKeys()
     let key['['] = funcref('<SID>disableGodMode')
 
     function key.q()
+        call s:end()
+        call VimGameCodeBreak#compatiblity#quit()
+    endfunction
+
+    function key.Q()
         call s:quit()
         call VimGameCodeBreak#compatiblity#quit()
     endfunction
@@ -194,6 +203,10 @@ endfunction
 
 function! s:quit()
     let s:loop = -1
+endfunction
+
+function! s:end()
+    let s:loop = 0
 endfunction
 
 function! s:enableGodMode()
