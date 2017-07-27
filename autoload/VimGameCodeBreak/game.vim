@@ -23,11 +23,13 @@ let s:godMode = 0
 let s:screen = {}
 let s:item = []
 let s:itemTemp = []
+let s:maxItemLimit = 2
 
 function! VimGameCodeBreak#game#main()
 
     let s:common = VimGameCodeBreak#common#new()
     let s:config = s:init()
+    let s:maxItemLimit = get(g:, 'vim_game_code_break_item_limit', 2)
 
     let s:screen = VimGameCodeBreak#screen#new(s:config)
     let s:bounce = VimGameCodeBreak#bounce#new(s:config)
@@ -154,7 +156,7 @@ function! s:updateItems(time)
 
     if len(s:itemTemp) > 0
         call filter(s:item, {ids, val -> val.active })
-        if len(s:item) < 2
+        if len(s:item) < s:maxItemLimit
             let s:item += s:itemTemp
         endif
         let s:itemTemp = []
