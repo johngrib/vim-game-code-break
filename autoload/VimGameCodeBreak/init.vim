@@ -41,6 +41,9 @@ function! VimGameCodeBreak#init#createBuffer(config)
 endfunction
 
 function! s:setLocalSetting(config)
+
+    let l:lastStatus = &laststatus
+
     " echo synIDattr(synIDtrans(hlID('StatusLine')), 'fg')
     setlocal bufhidden=wipe
     setlocal buftype=nofile
@@ -68,6 +71,7 @@ function! s:setLocalSetting(config)
     augroup vim_game_code_break
         execute "autocmd BufLeave <buffer> set t_ve=" . &t_ve
         execute "autocmd VimLeave <buffer> set t_ve=" . &t_ve
+        execute "autocmd BufLeave <buffer> set laststatus=" . l:lastStatus
     augroup END
     setlocal t_ve=
 
